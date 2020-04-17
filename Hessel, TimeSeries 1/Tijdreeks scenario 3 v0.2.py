@@ -9,7 +9,7 @@ plt.style.use('fivethirtyeight')
 
 
 os.chdir(r'C:\Users\Administrator\Documents\GitHub\DS\Hessel, TimeSeries 1')
-data = read_csv(r'data\MAAND OPEN PRD 2014-2019.csv', header=0, index_col=0, parse_dates=True, squeeze=True)
+data = pd.read_csv(r'data\MAAND OPEN PRD 2014-2019.csv', header=0, index_col=0, parse_dates=True, squeeze=True)
 
 # The 'MS' string groups the data in buckets by start of the month
 y = data
@@ -25,74 +25,51 @@ print(y)
 y.plot(figsize=(15, 6))
 plt.show()
 
-# Grid Search
-p = d = q = range(0,3)
-parameters = []
-for param in pdq:
-    for param_seasonal in seasonal_pdq:
-        try:
-            mod = sm.tsa.statespace.SARIMAX(y,
-                                            order=param,
-                                            seasonal_order=param_seasonal,
-                                            enforce_stationarity=False,
-                                            enforce_invertibility=False)
+def determine_orders(y, maxp, maxd, maxq, freq):
+    # Grid Search
+    warnings.filterwarnings("ignore") 
+    # specify to ignore warning messages
+    p = range(0, maxp)
+    d = range(0, maxd)
+    q = range(0, maxq)
+    parameters = []
+    # Generate all different combinations of seasonal p, q and q triplets
+    pdq = list(itertools.product(p, d, q))
+    seasonal_pdq = [(x[0], x[1], x[2], freq) for x in list(itertools.product(p, d, q))]
+    for param in pdq:
+            for param_seasonal in seasonal_pdq:
+                try:
+                    mod = sm.tsa.statespace.SARIMAX(y,
+                                                    order=param,
+                                                    seasonal_order=param_seasonal,
+                                                    enforce_stationarity=False,
+                                                    enforce_invertibility=False)
+                    results = mod.fit()
+                    print('ARIMA{}x{}12 - AIC:{}'.format(param, param_seasonal, results.aic))
+                except:
+                    continue
+                aic = results.aic
+                parameters.append([param, param_seasonal, aic])
+    result_table = pd.DataFrame(parameters)
+    result_table.columns = ['parameters',     'parameters_seasonal','aic']
+    result_table = result_table.sort_values(by='aic',ascending = True).reset_index(drop = True)
+    minimum = result_table['aic'].min()
+    a = result_table.loc[result_table['aic'] == minimum]
+    print(' The best combination that gives the lowest AIC is:')
+    print(a)
+    return a
 
-            results = mod.fit()
-
-            print('ARIMA{}x{}12 - AIC:{}'.format(param, param_seasonal, results.aic))
-        except:
-            continue
-        aic = results.aic
-        parameters.append([param,param_seasonal,aic])
-
-result_table = pd.DataFrame(parameters)
-result_table.columns = ['parameters',     'parameters_seasonal','aic']
-result_table = result_table.sort_values(by='aic',ascending = True).reset_index(drop = True)
-minimum = result_table['aic'].min()
-a = result_table.loc[result_table['aic'] == minimum]
-print(' The best combination that gives the lowest AIC is:')
-print(a)
-
-
-
-# Define the p, d and q parameters to take any value between 0 and 2
-p = d = q = range(0,3)
-p = 1
-d = 2
-q = 2 
-# Generate all different combinations of p, q and q triplets
-pdq = list(itertools.product(p, d, q))
-
-# Generate all different combinations of seasonal p, q and q triplets
-seasonal_pdq = [(x[0], x[1], x[2], 12) for x in list(itertools.product(p, d, q))]
-
-print('Examples of parameter combinations for Seasonal ARIMA...')
-print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[1]))
-print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[2]))
-print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[3]))
-print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[4]))
-
-warnings.filterwarnings("ignore") # specify to ignore warning messages
-
-for param in pdq:
-    for param_seasonal in seasonal_pdq:
-        try:
-            mod = sm.tsa.statespace.SARIMAX(y,
-                                            order=param,
-                                            seasonal_order=param_seasonal,
-                                            enforce_stationarity=False,
-                                            enforce_invertibility=False)
-
-            results = mod.fit()
-
-            print('ARIMA{}x{}12 - AIC:{}'.format(param, param_seasonal, results.aic))
-        except:
-            continue
-
-
+optparam  = determine_orders(y, 3, 3, 3, 12)
+optp = optparam.parameters[0][0]
+optd = optparam.parameters[0][1]
+optq = optparam.parameters[0][2]
+optP = optparam.parameters_seasonal[0][0]
+optD = optparam.parameters_seasonal[0][1]
+optQ = optparam.parameters_seasonal[0][2]
+optF = optparam.parameters_seasonal[0][3]
 mod = sm.tsa.statespace.SARIMAX(y,
-                                order=(1, 2, 2),
-                                seasonal_order=(1, 2, 2, 12),
+                                order=(optp, optd, optq),
+                                seasonal_order=(optP, optD, optQ, optF),
                                 enforce_stationarity=False,
                                 enforce_invertibility=False)
 
@@ -146,8 +123,8 @@ pred = results.get_prediction(start=pd.to_datetime('2019-01-01'), dynamic=False)
 pred_ci = pred.conf_int()
 
 y.plot(figsize=(15, 6))
-ax = y['2019':].plot(label='observed')
-pred.predicted_mean.plot(ax=ax, label='One-step ahead Forecast', alpha=.7)
+ax = y['2019':].plot(label='gerealiseerd')
+pred.predicted_mean.plot(ax=ax, label='voorspeld', alpha=.7)
 
 ax.fill_between(pred_ci.index,
                 pred_ci.iloc[:, 0],
@@ -162,3 +139,49 @@ ax.set_ylabel('Open')
 plt.legend()
 
 plt.show()
+#
+# maand         Voorspeld       Gerealiseerd
+# 2019-01-01    13426.539074    14300
+# 2019-02-01    14292.103403    13121
+# 2019-03-01    15569.793267    12886
+# 2019-04-01    13625.614083    13526
+# 2019-05-01    13073.407897    12531
+# 2019-06-01    10565.367334    11333
+# 2019-07-01    11211.175798    12864
+# 2019-08-01    14037.935017    10388
+# 2019-09-01    12632.575036    11387
+# 2019-10-01    15379.729148    13054
+# 2019-11-01    11857.994857    11354
+# 2019-12-01     7122.817781    9718
+#%%
+series = read_csv(r'data\MAAND OPEN PRD 2014-2019.csv',
+                  header=0, index_col=0, parse_dates=True, squeeze=True)
+pp.figure(figsize=(8, 3), dpi=100)
+pp.title('Openstaande Incidenten Per Maand')
+series.plot()
+pp.xlabel('jaren')
+pp.ylabel('incidenten')
+pp.tight_layout(pad=3.0)
+pp.show()
+
+groups = series['2014':'2019'].groupby(Grouper(freq='A'))
+years = DataFrame()
+for name, group in groups:
+	years[name.year] = group.values
+# Box and Whisker Plots
+pp.figure(figsize=(6, 4), dpi=100, edgecolor='k')
+years.boxplot()
+pp.title('Trend')
+pp.tight_layout(pad=3.0)
+pp.show()
+
+years = years.transpose()
+pp.figure(figsize=(6, 4), dpi=100, edgecolor='k')
+years.boxplot()
+pp.tight_layout(pad=3.0)
+pp.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+          ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun',
+           'jul', 'aug', 'sep', 'okt', 'nov', 'dec'])
+pp.title('Seizoen')
+pp.show()
+

@@ -5,9 +5,12 @@ import pandas as pd
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
 from statsmodels.tsa.stattools import adfuller
+from chart_studio import plotly as plt_mpl
+from statsmodels.tsa.seasonal import seasonal_decompose
+from pmdarima import auto_arima
+from statsmodels.tsa.arima_model import ARIMA
 
 plt.style.use('fivethirtyeight')
-
 
 os.chdir(r'C:\Users\Administrator\Documents\GitHub\DS\Hessel, TimeSeries 1')
 data = pd.read_csv(r'data\MAAND OPEN PRD 2014-2019.csv', header=0, index_col=0, parse_dates=True, squeeze=True)
@@ -15,17 +18,23 @@ data = pd.read_csv(r'data\MAAND OPEN PRD 2014-2019.csv', header=0, index_col=0, 
 # The 'MS' string groups the data in buckets by start of the month
 y = data
 y = y.resample('MS').mean()
+y = pd.Series(y)
+print(y)
 
+y.plot(figsize=(15, 6))
+plt.rcParams.update({'font.size': 9})
+plt.show()
 
+result = seasonal_decompose(data, model='multiplicative')
+fig = result.plot()
+plt.show()
+
+yshow = y[:len(y-11)]
+y, ytest = y[:(len(y)-12)], y[(len(y)-12):len(y)]
 # The term bfill means that we use the value before filling in missing values
 # To be secure.The data about incidents do not have missing values. So in this
 # case the action is obsolete.
 y = y.fillna(y.bfill())
-
-print(y)
-
-y.plot(figsize=(15, 6))
-plt.show()
 
 result = adfuller(y)
 print('ADF Statistic: %f' % result[0])
@@ -33,7 +42,6 @@ print('p-value: %f' % result[1])
 print('Critical Values:')
 for key, value in result[4].items():
 	print('\t%s: %.3f' % (key, value))
-
 
 def determine_orders(y, maxp, maxd, maxq, freq):
     # Grid Search
@@ -69,14 +77,58 @@ def determine_orders(y, maxp, maxd, maxq, freq):
     print(a)
     return a
 
-optparam  = determine_orders(y, 3, 3, 3, 12)
-optp = optparam.parameters[0][0]
-optd = optparam.parameters[0][1]
-optq = optparam.parameters[0][2]
-optP = optparam.parameters_seasonal[0][0]
-optD = optparam.parameters_seasonal[0][1]
-optQ = optparam.parameters_seasonal[0][2]
-optF = optparam.parameters_seasonal[0][3]
+# optparam  = determine_orders(y, 3, 3, 3, 12)
+# optp = optparam.parameters[0][0]
+# optd = optparam.parameters[0][1]
+# optq = optparam.parameters[0][2]
+# optP = optparam.parameters_seasonal[0][0]
+# optD = optparam.parameters_seasonal[0][1]
+# optQ = optparam.parameters_seasonal[0][2]
+# optF = optparam.parameters_seasonal[0][3]
+optp = 1
+optd = 1
+optq = 2
+optP = 1
+optD = 2
+optQ = 2
+optF = 11
+
+stepwise_model = auto_arima(y, start_p=1, start_q=1,
+                           max_p=3, max_q=3, m=12,
+                           start_P=0, seasonal=True,
+                           d=1, D=1, trace=True,
+                           error_action='ignore',  
+                           suppress_warnings=True, 
+                           stepwise=True)
+
+print(stepwise_model.aic())
+predm12 = stepwise_model.predict(n_periods=12)
+mod = ARIMA(diff, order=arima_order)
+
+model = ARIMA(train, order=(1, 1, 1))
+fitted = model.fit(disp=-1)
+
+# Forecast
+fc, se, conf = fitted.forecast(test.size, alpha=0.05)  # 95% conf
+
+# Make as pandas series
+fc_series = pd.Series(fc, index=test.index)
+lower_series = pd.Series(conf[:, 0], index=test.index)
+upper_series = pd.Series(conf[:, 1], index=test.index)
+
+# Plot
+plt.figure(figsize=(12, 5), dpi=100)
+plt.plot(train, label='training')
+plt.plot(test, label='actual')
+plt.plot(fc_series, label='forecast')
+plt.fill_between(lower_series.index, lower_series, upper_series,
+                 color='k', alpha=.15)
+plt.title('Forecast vs Actuals')
+plt.legend(loc='upper left', fontsize=8)
+plt.show()
+
+
+
 mod = sm.tsa.statespace.SARIMAX(y,
                                 order=(optp, optd, optq),
                                 seasonal_order=(optP, optD, optQ, optF),
@@ -87,8 +139,10 @@ results = mod.fit()
 
 print(results.summary().tables[1])
 
-results.plot_diagnostics(figsize=(15, 12))
-plt.show()
+# results.plot_diagnostics(figsize=(15,6))
+# plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
+# plt.rcParams.update({'font.size': 9})
+# plt.show()
 
 # Our primary concern is to ensure that the residuals of our model are 
 # uncorrelated and normally distributed with zero-mean. If the seasonal 
@@ -129,11 +183,11 @@ plt.show()
 # predicted_mean
 # var_predicted_mean
 # var_resid
-pred = results.get_prediction(start=pd.to_datetime('2019-01-01'), dynamic=False)
+pred = results.get_prediction(start=pd.to_datetime('2019-01-01'), end=pd.to_datetime('2019-12-01'), dynamic=False)
 pred_ci = pred.conf_int()
 
-y.plot(figsize=(15, 6))
-ax = y['2019':].plot(label='gerealiseerd')
+yshow.plot(figsize=(15, 6))
+ax = ytest.plot(label='gerealiseerd')
 pred.predicted_mean.plot(ax=ax, label='voorspeld', alpha=.7)
 
 ax.fill_between(pred_ci.index,
@@ -146,8 +200,9 @@ ax.fill_between(pred_ci.index,
 
 ax.set_xlabel('Datum')
 ax.set_ylabel('Open')
-plt.legend()
-
+plt.legend(loc='upper left')
+plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
+plt.rcParams.update({'font.size': 9})
 plt.show()
 #
 # maand         Voorspeld       Gerealiseerd

@@ -46,6 +46,10 @@ plt.xlabel('Jaren')
 plt.ylabel('Residual')
 plt.show()
 
+plt.rcParams.update({'figure.figsize': (10, 10)})
+result.plot().suptitle('Multiplicatieve Decompositie', fontsize=22)
+plt.show()
+
 yshow = y[:len(y-11)]
 y, ytest = y[:(len(y)-12)], y[(len(y)-12):len(y)]
 # The term bfill means that we use the value before filling in missing values

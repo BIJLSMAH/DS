@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.tsa.stattools import adfuller
@@ -43,12 +44,41 @@ plt.plot(result.trend)
 plt.xlabel('Jaren')
 plt.ylabel('Trend')
 plt.show()
-plt.figure(figsize=(8, 2), dpi=100)
+
+from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,
+                               AutoMinorLocator)
+
+t = np.arange(0.0, 100.0, 0.1)
+s = np.sin(0.1 * np.pi * t) * np.exp(-t * 0.01)
+
+fig, ax = plt.subplots()
+ax.plot(t, s)
+
+# Make a plot with major ticks that are multiples of 20 and minor ticks that
+# are multiples of 5.  Label major ticks with '%d' formatting but don't label
+# minor ticks.
+ax.xaxis.set_major_locator(MultipleLocator(12))
+ax.xaxis.set_major_formatter(FormatStrFormatter('%d'))
+
+# For the minor ticks, use no labels; default NullFormatter.
+ax.xaxis.set_minor_locator(MultipleLocator(1))
+
+plt.show()
+
+
+plt.figure(figsize=(10, 2), dpi=100)
 # plt.title('Seasonality')
+plt.rcParams.update({'font.size': 6})
 plt.plot(result.seasonal)
 plt.xlabel('Jaren')
-plt.ylabel('Seasonality')
+plt.xticks(ticks=data.index, labels=data.index.strftime('%b'))
+plt.xaxis.set_major_locator(data.index.strftime('%Y'))
+plt.xaxis.set_minor_locator(data.index.strftime('%b'))
+plt.tick_params(axis ='x', rotation = 90)
 plt.show()
+
+
+
 plt.figure(figsize=(8, 2), dpi=100)
 # plt.title('Residual')
 plt.plot(result.resid)

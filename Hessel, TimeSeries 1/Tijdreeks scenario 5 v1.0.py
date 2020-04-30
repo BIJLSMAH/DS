@@ -1,11 +1,12 @@
 import os
-import numpy as np
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.seasonal import seasonal_decompose
 from pmdarima import auto_arima
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def monthlist(dates):
     start, end = [datetime.strptime(_, "%Y-%m-%d") for _ in dates]
@@ -41,53 +42,26 @@ plt.show()
 plt.figure(figsize=(8, 2), dpi=100)
 # plt.title('Trend')
 plt.plot(result.trend)
-plt.xlabel('Jaren')
-plt.ylabel('Trend')
+plt.xlabel('JAREN')
+plt.ylabel('TREND')
 plt.show()
 
-from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,
-                               AutoMinorLocator)
-
-t = np.arange(0.0, 100.0, 0.1)
-s = np.sin(0.1 * np.pi * t) * np.exp(-t * 0.01)
-
-fig, ax = plt.subplots()
-ax.plot(t, s)
-
-# Make a plot with major ticks that are multiples of 20 and minor ticks that
-# are multiples of 5.  Label major ticks with '%d' formatting but don't label
-# minor ticks.
-ax.xaxis.set_major_locator(MultipleLocator(12))
-ax.xaxis.set_major_formatter(FormatStrFormatter('%d'))
-
-# For the minor ticks, use no labels; default NullFormatter.
-ax.xaxis.set_minor_locator(MultipleLocator(1))
-
-plt.show()
-
-
-plt.figure(figsize=(10, 2), dpi=100)
-# plt.title('Seasonality')
-plt.rcParams.update({'font.size': 6})
+plt.figure(figsize=(8, 2), dpi=100)
+# plt.title('Seasonal')
 plt.plot(result.seasonal)
-plt.xlabel('Jaren')
-plt.xticks(ticks=data.index, labels=data.index.strftime('%b'))
-plt.xaxis.set_major_locator(data.index.strftime('%Y'))
-plt.xaxis.set_minor_locator(data.index.strftime('%b'))
-plt.tick_params(axis ='x', rotation = 90)
+plt.xlabel('JAREN')
+plt.ylabel('SEIZOENWERKING')
 plt.show()
-
-
 
 plt.figure(figsize=(8, 2), dpi=100)
 # plt.title('Residual')
 plt.plot(result.resid)
-plt.xlabel('Jaren')
-plt.ylabel('Residual')
+plt.xlabel('JAREN')
+plt.ylabel('RUIS')
 plt.show()
 
 plt.rcParams.update({'figure.figsize': (10, 10)})
-result.plot().suptitle('Multiplicatieve Decompositie', fontsize=22)
+result.plot().suptitle('Multiplicatieve Decompositie', fontsize=12)
 plt.show()
 
 yshow = y[:len(y-11)]
@@ -114,22 +88,41 @@ stepwise_model = auto_arima(y, start_p=1, start_q=1,
 
 print(stepwise_model.aic())
 # Doorloop de maanden en verzamel maandgegevens over de totalen
-dates=["2019-01-01", "2020-12-01"]
+dates=["2019-01-01", "2019-12-01"]
 mndLijst = monthlist(dates)
 
-predm12 = pd.Series(stepwise_model.predict(n_periods=len(ytest)*2), index=mndLijst)
+predm12 = pd.Series(stepwise_model.predict(n_periods=len(mndLijst)), index=mndLijst)
 lower_series = ytest - 0.15 * ytest
 upper_series = ytest + 0.15 * ytest
 plt.figure(figsize=(8, 3), dpi=100)
-plt.plot(yshow, label='training')
-plt.plot(ytest, label='actual')
-plt.plot(predm12, label='forecast')
-plt.xlabel('jaren')
-plt.ylabel('incidenten')
+plt.plot(yshow, label='OBSERVATIES TRAINING')
+plt.plot(ytest, label='OBSERVATIES TEST')
+plt.plot(predm12, label='VOORSPELLING')
+plt.xlabel('JAREN')
+plt.ylabel('INCIDENTEN')
 plt.fill_between(lower_series.index, lower_series, upper_series,
                  color='k', alpha=.15)
 plt.tight_layout(pad=3.0)
-plt.title('Forecast vs Actuals')
+plt.title('Voorspelling vs Observaties')
+plt.legend(loc='upper left', fontsize=8)
+plt.show()
+
+
+plt.figure(figsize=(8, 3), dpi=100)
+ytestdf = pd.DataFrame(ytest)
+ytestdf = ytestdf.reset_index()['open']
+predm12df = pd.DataFrame(predm12, columns=['open'])
+predm12df = predm12df.reset_index()['open']
+
+plt.plot(ytestdf, label='OBSERVATIES TEST')
+plt.plot(predm12df, label='VOORSPELLING')
+plt.xlabel('MAANDEN 2019')
+plt.ylabel('INCIDENTEN')
+plt.tight_layout(pad=3.0)
+plt.xticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+          ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun',
+           'jul', 'aug', 'sep', 'okt', 'nov', 'dec'])
+plt.title('Voorspelling vs Observaties')
 plt.legend(loc='upper left', fontsize=8)
 plt.show()
 
@@ -141,8 +134,8 @@ series = pd.read_csv(r'data\MAAND OPEN PRD 2014-2019.csv',
 plt.figure(figsize=(8, 3), dpi=100)
 plt.title('Openstaande Incidenten Per Maand')
 series.plot()
-plt.xlabel('jaren')
-plt.ylabel('incidenten')
+plt.xlabel('JAREN')
+plt.ylabel('INCIDENTEN')
 plt.tight_layout(pad=3.0)
 plt.show()
 

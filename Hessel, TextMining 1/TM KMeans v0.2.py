@@ -9,12 +9,11 @@ import os
 import pandas as pd
 import numpy as np
 
-from sklearn.feature_extraction import text
 from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
+from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from sklearn.cluster import KMeans
-from sklearn.metrics import adjusted_rand_score
 # load the dataset
 
 # for i in range(0,861):
@@ -40,7 +39,10 @@ data = data[['Incidentnummer', 'Korte omschrijving Details', 'Verzoek', 'Soort b
 # Helaas werkt KMeans alleen met cijfers en getallen. Daarom is het
 # eerst noodzakelijk de teksten de vectorizeren.
 
-documents = data['Korte omschrijving Details']
+documentstxt = data['Korte omschrijving Details']
+documentslst = list()
+for d in documentstxt:
+    documentslst.append(word_tokenize(d))
 nltk.download('stopwords')
 my_stopwords = stopwords.words('dutch')
 
@@ -52,7 +54,7 @@ for stopword in x:
        my_stopwords.append(stopword)
 
 vectorizer = TfidfVectorizer(stop_words=my_stopwords)
-X = vectorizer.fit_transform(documents)
+X = vectorizer.fit_transform(documentstxt)
 
 df_freq_objectid = data.groupby("Object ID", sort=True).count().nlargest(20, columns=('Incidentnummer')).astype(np.uintc)['Incidentnummer']
 
@@ -81,20 +83,27 @@ Y = vectorizer.transform(["Mijn Outlook is ermee gestopt !"])
 prediction = model.predict(Y)
 print(prediction)
 
-from nltk.corpus import movie_reviews
-nltk.download('movie_reviews')
-documents = [(list(movie_reviews.words(fileid)), category)
-              for category in movie_reviews.categories()
-              for fileid in movie_reviews.fileids(category)]
-# random.shuffle(documents)
+# from nltk.corpus import movie_reviews
+# nltk.download('movie_reviews')
 
-all_words = nltk.FreqDist(w.lower() for w in movie_reviews.words())
-word_features = list(all_words)[:2000]
+# Bepaald de woordfrequentie binnen alle documenten
+all_words = list()
+for x in documentslst:
+    for y in x:
+        all_words.append(y)
+        
+# Bepaal de meest gebruikte woorden.
+all_words = nltk.FreqDist(w.lower() for w in all_words)
+word_features = list(all_words)[:20]
 def document_features(document):
-    document_words = set(document)
+    document_words = set()
+    for d in document:
+        document_words.add(d)
     features = {}
     for word in word_features:
-        features['contains({})'.format(word)] = (word in document_words)
+        if word in document_words:
+            features['bevat({})'.format(word)] = (word in document_words)
     return features
 
-document_features(documents[0])
+for i in range(0, len(documentslst)):
+    print(document_features(documentslst[i]))

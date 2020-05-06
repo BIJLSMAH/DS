@@ -1,3 +1,4 @@
 # exclude everything
 **/data
 **/grafieken
+**/00. Raw dataset

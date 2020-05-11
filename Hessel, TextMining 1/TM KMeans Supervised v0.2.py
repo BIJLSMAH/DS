@@ -52,8 +52,15 @@ os.chdir(hoofdmap)
 
 # Nu eerst even werken met een subset.
 
-df = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3-subset.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
+df = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
 df = df[['Incidentnummer', 'Korte omschrijving Details', 'Verzoek', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
+# replacing na values in OBJECT ID with Onbekend 
+df['Object ID'].fillna("Onbekend", inplace = True) 
+
+# Vanwege performance overwegingen, werken met een steekproef (sample),
+
+# chosen_idx = np.random.choice(len(df), replace=False, size=1000)
+# df = df.iloc[chosen_idx]
 
 df.head()
 #%% DATA EXPLORATION
@@ -158,14 +165,18 @@ import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import chi2
+import numpy as np
 
 # De dataset gaan we eerst laden
 os.chdir(hoofdmap)
 
 # Nu eerst even werken met een subset.
 
-df = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3-subset.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
+df = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
 df = df[['Incidentnummer', 'Korte omschrijving Details', 'Verzoek', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
+# replacing na values in OBJECT ID with Onbekend 
+df['Object ID'].fillna("Onbekend", inplace = True) 
+
 df['Korte omschrijving Details'][1]
 
 # Vervangen sturingskarakters.
@@ -201,6 +212,12 @@ for stopword in x:
 for stop_word in my_stopwords:
     regex_stopword = r"\b" + stop_word + r"\b"
     df['Korte omschrijving Details'] = df['Korte omschrijving Details'].str.replace(regex_stopword, '')
+
+# We filteren df nu even om alleen de object-id's mee te nemen die een 
+# relevant aantal incidenten onder zich heeft.
+
+df2 = df.groupby('Object ID').count()
+df2 = df2.nlargest(20, 'Incidentnummer')
 
 # Nu het splitsen van de gegevensverzameling in train en test
 
@@ -242,9 +259,6 @@ features_test = tfidf.transform(X_test).toarray()
 labels_test = y_test
 print(features_test.shape)
 
-df2 = df.groupby('Object ID').count()
-df2 = df2.nlargest(20, 'Incidentnummer')
-
 for objectid in sorted(df2.index):
     features_chi2 = chi2(features_train, labels_train == objectid)
     indices = np.argsort(features_chi2[0])
@@ -260,43 +274,33 @@ import pickle
 # X_train
 with open('data/X_train.pickle', 'wb') as output:
     pickle.dump(X_train, output)
-    
 # X_test    
 with open('data/X_test.pickle', 'wb') as output:
     pickle.dump(X_test, output)
-    
 # y_train
 with open('data/y_train.pickle', 'wb') as output:
     pickle.dump(y_train, output)
-    
 # y_test
 with open('data/y_test.pickle', 'wb') as output:
     pickle.dump(y_test, output)
-    
 # df
 with open('data/df.pickle', 'wb') as output:
     pickle.dump(df, output)
-    
 # df2
 with open('data/df2.pickle', 'wb') as output:
     pickle.dump(df2, output)
-    
 # features_train
 with open('data/features_train.pickle', 'wb') as output:
     pickle.dump(features_train, output)
-
 # labels_train
 with open('data/labels_train.pickle', 'wb') as output:
     pickle.dump(labels_train, output)
-
 # features_test
 with open('data/features_test.pickle', 'wb') as output:
     pickle.dump(features_test, output)
-
 # labels_test
 with open('data/labels_test.pickle', 'wb') as output:
     pickle.dump(labels_test, output)
-    
 # TF-IDF object
 with open('data/tfidf.pickle', 'wb') as output:
     pickle.dump(tfidf, output)
@@ -339,24 +343,26 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from sklearn.model_selection import ShuffleSplit
 
+
+# zet eerst een 
 rf_0 = RandomForestClassifier(random_state = 8)
 
 print('Parameters currently in use:\n')
 pprint(rf_0.get_params())
 
 # Aanpassen tune parameters
-# n_estimators
+# n_estimators, aantal beslisbomen in forest
 n_estimators = [int(x) for x in np.linspace(start = 200, stop = 1000, num = 5)]
-# max_features
+# max_features, aantal kenmerken die bekeken worden voor het splitsen
 max_features = ['auto', 'sqrt']
-# max_depth
+# max_depth, maximaal aantal niveaus in een beslisboom
 max_depth = [int(x) for x in np.linspace(20, 100, num = 5)]
 max_depth.append(None)
-# min_samples_split
+# min_samples_split, minimaal aantal datapunten voordat een node wordt gesplitst
 min_samples_split = [2, 5, 10]
-# min_samples_leaf
+# min_samples_leaf, minimum aantal datapunten in een leaf node
 min_samples_leaf = [1, 2, 4]
-# bootstrap
+# bootstrap, manier van samplen van datapunten met of zonder terugleggen.
 bootstrap = [True, False]
 # Create the random grid
 random_grid = {'n_estimators': n_estimators,
@@ -386,6 +392,7 @@ random_search.fit(features_train, labels_train)
 #%% MODEL TRAINING
 # 2. SVM Support Vector Machine
 import pickle
+import os
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import svm
@@ -427,6 +434,123 @@ with open(path_labels_test, 'rb') as data:
 print(features_train.shape)
 print(features_test.shape)
 
+svc_0 =svm.SVC(random_state=8)
+
+print('Parameters currently in use:\n')
+pprint(svc_0.get_params())
+
+# C
+C = [.0001, .001, .01]
+# gamma
+gamma = [.0001, .001, .01, .1, 1, 10, 100]
+# degree
+degree = [1, 2, 3, 4, 5]
+# kernel
+kernel = ['linear', 'rbf', 'poly']
+# probability
+probability = [True]
+
+# Create the random grid
+random_grid = {'C': C,
+              'kernel': kernel,
+              'gamma': gamma,
+              'degree': degree,
+              'probability': probability
+             }
+
+pprint(random_grid)
+
+# First create the base model to tune
+svc = svm.SVC(random_state=8)
+
+# Definition of the random search
+random_search = RandomizedSearchCV(estimator=svc,
+                                   param_distributions=random_grid,
+                                   n_iter=50,
+                                   scoring='accuracy',
+                                   cv=3, 
+                                   verbose=1, 
+                                   random_state=8)
+
+# Fit the random search model
+random_search.fit(features_train, labels_train)
+
+print("The best hyperparameters from Random Search are:")
+print(random_search.best_params_)
+print("")
+print("The mean accuracy of a model with these hyperparameters is:")
+print(random_search.best_score_)
+
+# Nadat we dit gedaan hebben kunnen we het resultaat gebruiken voor verdere
+# verwerking. Gebruik de gemiddelden van het beste resultaat als gemiddelde voor
+# de nieuwe fit parameters.
+
+# Create the parameter grid based on the results of random search 
+C = [.0001, .001, .01, .1]
+degree = [3, 4, 5]
+gamma = [1, 10, 100]
+probability = [True]
+
+#%% MODEL TRAINING
+# 3. KNN K Nearest Neigbors
+
+
+#%% MODEL TRAINING
+# 4. Multinomal Naive Bayes
+
+import pickle
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from pprint import pprint
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.model_selection import ShuffleSplit
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+
+# Haal gegevens op
+os.chdir(hoofdmap)
+# Dataframe
+path_df = "data/df.pickle"
+with open(path_df, 'rb') as data:
+    df = pickle.load(data)
+# Dataframe unique top ObjectID
+path_df2 = "data/df2.pickle"
+with open(path_df, 'rb') as data:
+    df = pickle.load(data)
+# features_train
+path_features_train = "data/features_train.pickle"
+with open(path_features_train, 'rb') as data:
+    features_train = pickle.load(data)
+# labels_train
+path_labels_train = "data/labels_train.pickle"
+with open(path_labels_train, 'rb') as data:
+    labels_train = pickle.load(data)
+# features_test
+path_features_test = "data/features_test.pickle"
+with open(path_features_test, 'rb') as data:
+    features_test = pickle.load(data)
+# labels_test
+path_labels_test = "data/labels_test.pickle"
+with open(path_labels_test, 'rb') as data:
+    labels_test = pickle.load(data)
+print(features_train.shape)
+print(features_test.shape)
+
+mnbc = MultinomialNB()
+mnbc
+
+# Er zijn blijkbaar wat OBJECT ID's onbekend of niet ingevuld.
+# Het is niet duidelijk of dit voor kan komen of dat het invullen van
+# een object id verplicht is. Ten behoeve van het trainen moeten we deze
+# uit de trainingset filteren. Hetzelfde geldt natuurlijk voor de testset
+
+mnbc.fit(features_train, labels_train)
+
+mnbc_pred(features_test)
 
 #sns.boxplot(data=df1, x='Object ID', y='lengte', width=.5)
 

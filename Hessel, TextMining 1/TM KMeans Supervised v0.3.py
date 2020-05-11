@@ -224,6 +224,11 @@ X_train, X_test, y_train, y_test = train_test_split(df['Korte omschrijving Detai
                                                     df['Object ID'], 
                                                     test_size = 0.15,
                                                     random_state = 8)
+# Baseline
+
+df3_totaal = len(X_train)
+df3_grootste = y_train.groupby(y_train[1]).count()
+
 
 # Text Representation
 # Verschillende keuzes.
@@ -552,8 +557,14 @@ mnbc
 
 mnbc.fit(features_train, labels_train)
 
-mnbc.pred(features_test)
+mnbc_pred = mnbc.predict(features_test)
 
+# training accuracy op basis van de trainingset en de testset:
+print("The training accuracy is: ")
+print(accuracy_score(labels_train, mnbc.predict(features_train)))
+
+# baseline
+df2
 #sns.boxplot(data=df1, x='Object ID', y='lengte', width=.5)
 
 # for i in range(0,861):

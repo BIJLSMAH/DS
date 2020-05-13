@@ -22,6 +22,10 @@ from sklearn.cluster import KMeans
 #     print(fileseq[-3:])
 #     data = pd.read_csv(filename, header=0, index_col=0, parse_dates=True, squeeze=True)
 
+# Scikit learn
+# Elbow methode ...
+# sparse matrices 
+
 os.chdir(r'C:\Users\Administrator\Documents\GitHub\DS\Hessel, TextMining 1')
 # data = pd.read_excel(r'data\Incidenten_SD_2018_2019_totaal.xlsm', header=0, parse_dates=False, squeeze=True)
 # data = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v2-subset2.csv', header=0, parse_dates=False, squeeze=True)

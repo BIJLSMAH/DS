@@ -42,7 +42,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # load the dataset
-hoofdmap = r'C:\Users\Laptop\Documents\GitHub\DS\Hessel, TextMining 1'
+hoofdmap = r'C:\Users\Administrator\Documents\GitHub\DS\Hessel, TextMining 1'
 os.chdir(hoofdmap)
 # data = pd.read_excel(r'data\Incidenten_SD_2018_2019_totaal.xlsm', header=0, parse_dates=False, squeeze=True)
 # data.to_csv(r'data\Incidenten_SD_2018_2019_totaal-v3.csv')
@@ -158,6 +158,7 @@ chart.set_xticklabels(chart.get_xticklabels(), rotation=45, horizontalalignment=
 
 import os
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import chi2
 
@@ -227,8 +228,10 @@ X_train, X_test, y_train, y_test = train_test_split(df['Korte omschrijving Detai
 # Baseline
 
 df3_totaal = len(X_train)
-df3_grootste = y_train.groupby(y_train[1]).count()
-
+df3_grootste = y_train.groupby(y_train).count().nlargest(1)
+df3_baseline = df3_grootste[0] / df3_totaal
+print("Het model moet beter presteren dan:")
+print("% '{}' BASELINE:".format(df3_baseline))
 
 # Text Representation
 # Verschillende keuzes.

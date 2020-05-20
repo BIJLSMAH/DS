@@ -9,7 +9,7 @@ Created on Thu May 14 14:46:33 2020
 from sklearn import model_selection, preprocessing, linear_model, naive_bayes, metrics, svm
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn import decomposition, ensemble
-
+import numpy as np
 import pandas as pd
 import xgboost, numpy, textblob, string
 from keras.preprocessing import text, sequence
@@ -44,6 +44,19 @@ df = df[['Incidentnummer', 'Korte omschrijving Details', 'Verzoek', 'Soort binne
 # replacing na values in OBJECT ID with Onbekend 
 df['Object ID'].fillna("Onbekend", inplace = True) 
 
+# Vanwege performance overwegingen, werken met een steekproef (sample),
+
+# chosen_idx = np.random.choice(len(df), replace=False, size=int(len(df)/2))
+# Er zijn objectid waar heel weinig incidenten betrekking op hebben. Deze 
+# vervuilen de analyse. Daarom worden deze in onderstaande code gefilterd.
+
+df2 = df.groupby('Object ID').count()
+df2 = df2.nlargest(20 , 'Incidentnummer')
+df = df[df['Object ID'].isin(df2.index)]
+
+steekproefgrootte = 20000
+chosen_idx = np.random.choice(len(df), replace=False, size=((len(df)>steekproefgrootte)*steekproefgrootte)+((len(df)<=steekproefgrootte)*len(df)))
+df = df.iloc[chosen_idx]
 # inclabels, inctexts = [], []
 # for objid in df['Object ID']:
 #     inclabels.append(objid)
@@ -52,8 +65,8 @@ df['Object ID'].fillna("Onbekend", inplace = True)
 #     inctexts.append(omschr)
 
 inctrainDF = pd.DataFrame()
-inctrainDF['text'] = df['Object ID']
-inctrainDF['label'] = df['Korte omschrijving Details']
+inctrainDF['label'] = df['Object ID']
+inctrainDF['text'] = df['Korte omschrijving Details']
 
 #%% OPDELEN IN TRAIN EN TEST
 # split the dataset into training and validation datasets 
@@ -83,7 +96,7 @@ valid_x = incvalid_x
 train_y = inctrain_y
 valid_y = incvalid_y
 count_vect = CountVectorizer(analyzer='word', token_pattern=r'\w{1,}')
-count_vect.fit(trainDF['text'])
+count_vect.fit(train_x)
 
 # transform the training and validation data using count vectorizer object
 xtrain_count =  count_vect.transform(train_x)
@@ -93,19 +106,19 @@ xvalid_count =  count_vect.transform(valid_x)
 # word level tf-idf
 print("2.2. FEATURE ENGINEERING: Generate TF-IDF Vectors . . .")
 tfidf_vect = TfidfVectorizer(analyzer='word', token_pattern=r'\w{1,}', max_features=5000)
-tfidf_vect.fit(trainDF['text'])
+tfidf_vect.fit(train_x)
 xtrain_tfidf =  tfidf_vect.transform(train_x)
 xvalid_tfidf =  tfidf_vect.transform(valid_x)
 
 # ngram level tf-idf 
 tfidf_vect_ngram = TfidfVectorizer(analyzer='word', token_pattern=r'\w{1,}', ngram_range=(2,3), max_features=5000)
-tfidf_vect_ngram.fit(trainDF['text'])
+tfidf_vect_ngram.fit(train_x)
 xtrain_tfidf_ngram =  tfidf_vect_ngram.transform(train_x)
 xvalid_tfidf_ngram =  tfidf_vect_ngram.transform(valid_x)
 
 # characters level tf-idf
 tfidf_vect_ngram_chars = TfidfVectorizer(analyzer='char', ngram_range=(2,3), max_features=5000)
-tfidf_vect_ngram_chars.fit(trainDF['text'])
+tfidf_vect_ngram_chars.fit(train_x)
 xtrain_tfidf_ngram_chars =  tfidf_vect_ngram_chars.transform(train_x) 
 xvalid_tfidf_ngram_chars =  tfidf_vect_ngram_chars.transform(valid_x) 
 
@@ -122,7 +135,7 @@ embeddings_index = {}
 print("2.3. FEATURE ENGINEERING: Word Embeddings Tokenize Vectors . . .")
 
 token = text.Tokenizer()
-token.fit_on_texts(trainDF['text'])
+token.fit_on_texts(train_x)
 word_index = token.word_index
 
 # convert text to sequence of tokens and pad them to ensure equal length vectors 
@@ -189,7 +202,7 @@ for i, topic_dist in enumerate(topic_word):
     topic_words = numpy.array(vocab)[numpy.argsort(topic_dist)][:-(n_top_words+1):-1]
     topic_summaries.append(' '.join(topic_words))
     
-#%% MODEL SELECTION
+#%% MODEL BUILDING
 # The final step in the text classification framework is to train a classifier 
 # using the features created in the previous step. There are many different 
 # choices of machine learning models which can be used to train a final model. 
@@ -214,3 +227,233 @@ for i, topic_dist in enumerate(topic_word):
 # It accepts the classifier, feature_vector of training data, labels of 
 # training data and feature vectors of valid data as inputs. Using 
 # these inputs, the model is trained and accuracy score is computed.
+
+def train_model(classifier, feature_vector_train, label, feature_vector_valid, is_neural_net=False):
+    # fit the training dataset on the classifier
+    classifier.fit(feature_vector_train, label)
+    
+    # predict the labels on validation dataset
+    predictions = classifier.predict(feature_vector_valid)
+    
+    if is_neural_net:
+        predictions = predictions.argmax(axis=-1)
+    
+    return metrics.accuracy_score(predictions, valid_y)
+
+#%% 3.1. NAIVE BAYES
+# Implementing a naive bayes model using sklearn implementation with 
+# different features Naive Bayes is a classification technique based on 
+# Bayes’ Theorem with an assumption of independence among predictors. 
+# A Naive Bayes classifier assumes that the presence of a particular feature 
+# in a class is unrelated to the presence of any other feature.
+
+# Naive Bayes on Count Vectors
+accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_count, train_y, xvalid_count)
+print ("NB, Count Vectors: %.10f" % accuracy)
+
+# Naive Bayes on Word Level TF IDF Vectors
+accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_tfidf, train_y, xvalid_tfidf)
+print ("NB, WordLevel TF-IDF:  %.10f" % accuracy)
+
+# Naive Bayes on Ngram Level TF IDF Vectors
+accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram)
+print ("NB, N-Gram Vectors:  %.10f" % accuracy)
+
+# Naive Bayes on Character Level TF IDF Vectors
+accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_tfidf_ngram_chars, train_y, xvalid_tfidf_ngram_chars)
+print ("NB, CharLevel Vectors: %.10f" % accuracy)
+
+#%% 3.2. LINEAR CLASSIFIER
+# Logistic regression measures the relationship between the categorical 
+# dependent variable and one or more independent variables by estimating 
+# probabilities using a logistic/sigmoid function. 
+
+# Linear Classifier on Count Vectors
+accuracy = train_model(linear_model.LogisticRegression(), xtrain_count, train_y, xvalid_count)
+print ("LR, Count Vectors: %.10f" % accuracy)
+
+# Linear Classifier on Word Level TF IDF Vectors
+accuracy = train_model(linear_model.LogisticRegression(), xtrain_tfidf, train_y, xvalid_tfidf)
+print ("LR, WordLevel TF-IDF:  %.10f" % accuracy)
+
+# Linear Classifier on Ngram Level TF IDF Vectors
+accuracy = train_model(linear_model.LogisticRegression(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram)
+print ("LR, N-Gram Vectors:  %.10f" % accuracy)
+
+# Linear Classifier on Character Level TF IDF Vectors
+accuracy = train_model(linear_model.LogisticRegression(), xtrain_tfidf_ngram_chars, train_y, xvalid_tfidf_ngram_chars)
+print ("LR, CharLevel Vectors: %.10f" % accuracy)
+
+#%% 3.3. SVM 
+# SVM on Ngram Level Count Vectors
+accuracy = train_model(svm.SVC(), xtrain_count, train_y, xvalid_count)
+print ("SVM, Count Vectors: %.10f" % accuracy)
+
+# VM on Ngram Level TF IDF Vectors
+accuracy = train_model(svm.SVC(), xtrain_tfidf, train_y, xvalid_tfidf)
+print ("SVM, WordLevel TF-IDF:  %.10f" % accuracy)
+
+# VM on Ngram Level Ngram Vectors
+accuracy = train_model(svm.SVC(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram)
+print ("SVM, N-Gram Vectors:  %.10f" % accuracy)
+
+# VM on Ngram Level Charlevel Vectors
+accuracy = train_model(svm.SVC(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram_chars)
+print ("SVM, CharLevel Vectors: %.10f" % accuracy)
+
+#%% 3.4 RF on Word Level TF IDF Vectors
+# RF on Count Vectors
+accuracy = train_model(ensemble.RandomForestClassifier(), xtrain_count, train_y, xvalid_count)
+print("RF, Count Vectors: %.10f" % accuracy)
+
+# RF on Wordlevel TF-IDF
+accuracy = train_model(ensemble.RandomForestClassifier(), xtrain_tfidf, train_y, xvalid_tfidf)
+print("RF, WordLevel TF-IDF: %.10f" % accuracy)
+
+# RF on Ngram Level Ngram vector
+accuracy = train_model(ensemble.RandomForestClassifier(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram)
+print("RF, N-Gram Vectors: %.10f" % accuracy)
+
+# RF on Ngram Level Charlevel Vectors
+accuracy = train_model(ensemble.RandomForestClassifier(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram_chars)
+print("RF, CharLevel Vectors: %.10f" % accuracy)
+
+#%% 3.5. Boosting model
+# Implementing Xtereme Gradient Boosting Model
+# Boosting models are another type of ensemble models part of tree 
+# based models. Boosting is a machine learning ensemble meta-algorithm 
+# for primarily reducing bias, and also variance in supervised learning, 
+# and a family of machine learning algorithms that convert weak learners to 
+# strong ones. A weak learner is defined to be a classifier that is only 
+# slightly correlated with the true classification (it can label examples 
+# better than random guessing). 
+
+# Extreme Gradient Boosting on Count Vectors
+accuracy = train_model(xgboost.XGBClassifier(), xtrain_count.tocsc(), train_y, xvalid_count.tocsc())
+print("Xgb, Count Vectors: %.10f" % accuracy)
+
+# Extreme Gradient Boosting on Word Level TF IDF Vectors
+accuracy = train_model(xgboost.XGBClassifier(), xtrain_tfidf.tocsc(), train_y, xvalid_tfidf.tocsc())
+print("Xgb, Wordlevel TF-IDF: %.10f" % accuracy)
+
+# Extreme Gradient Boosting on NGram Vectors
+accuracy = train_model(xgboost.XGBClassifier(), xtrain_tfidf_ngram.tocsc(), train_y, xvalid_tfidf_ngram.tocsc())
+print("Xgb, N-Gram Vectors: %.10f" % accuracy)
+
+# Extreme Gradient Boosting on Character Level TF IDF Vectors
+accuracy = train_model(xgboost.XGBClassifier(), xtrain_tfidf_ngram_chars.tocsc(), train_y, xvalid_tfidf_ngram_chars.tocsc())
+print ("Xgb, CharLevel Vectors: %.10f" % accuracy)
+
+#%% 4.1. CONVOLUTIONAL NEURAL NETWORKS
+
+def create_cnn():
+    # Add an Input Layer
+    input_layer = layers.Input((70, ))
+
+    # Add the word embedding Layer
+    embedding_layer = layers.Embedding(len(word_index) + 1, 300, weights=[embedding_matrix], trainable=False)(input_layer)
+    embedding_layer = layers.SpatialDropout1D(0.3)(embedding_layer)
+
+    # Add the convolutional Layer
+    conv_layer = layers.Convolution1D(100, 3, activation="relu")(embedding_layer)
+
+    # Add the pooling Layer
+    pooling_layer = layers.GlobalMaxPool1D()(conv_layer)
+
+    # Add the output Layers
+    output_layer1 = layers.Dense(50, activation="relu")(pooling_layer)
+    output_layer1 = layers.Dropout(0.25)(output_layer1)
+    output_layer2 = layers.Dense(1, activation="sigmoid")(output_layer1)
+
+    # Compile the model
+    model = models.Model(inputs=input_layer, outputs=output_layer2)
+    model.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy')
+    
+    return model
+
+classifier = create_cnn()
+accuracy = train_model(classifier, train_seq_x, train_y, valid_seq_x, is_neural_net=True)
+
+print("CNN, Word Embeddings: %.10f" % accuracy)
+
+#%% 4.2. RECURRENT NEURAL NETWORK (LSTM)
+
+def create_rnn_lstm():
+    # Add an Input Layer
+    input_layer = layers.Input((70, ))
+
+    # Add the word embedding Layer
+    embedding_layer = layers.Embedding(len(word_index) + 1, 300, weights=[embedding_matrix], trainable=False)(input_layer)
+    embedding_layer = layers.SpatialDropout1D(0.3)(embedding_layer)
+
+    # Add the LSTM Layer
+    lstm_layer = layers.LSTM(100)(embedding_layer)
+
+    # Add the output Layers                                            
+    output_layer1 = layers.Dense(50, activation="relu")(lstm_layer)
+    output_layer1 = layers.Dropout(0.25)(output_layer1)
+    output_layer2 = layers.Dense(1, activation="sigmoid")(output_layer1)
+
+    # Compile the model
+    model = models.Model(inputs=input_layer, outputs=output_layer2)
+    model.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy')
+    
+    return model
+
+classifier = create_rnn_lstm()
+accuracy = train_model(classifier, train_seq_x, train_y, valid_seq_x, is_neural_net=True)
+print("RNN-LSTM, Word Embeddings: %.10f" % accuracy)
+
+#%% 4.2. RECURRENT NEURAL NETWORK (GRU = GRADIENT RECURRENT UNITS)
+def create_rnn_gru():
+    # Add an Input Layer
+    input_layer = layers.Input((70, ))
+
+    # Add the word embedding Layer
+    embedding_layer = layers.Embedding(len(word_index) + 1, 300, weights=[embedding_matrix], trainable=False)(input_layer)
+    embedding_layer = layers.SpatialDropout1D(0.3)(embedding_layer)
+
+    # Add the GRU Layer
+    lstm_layer = layers.GRU(100)(embedding_layer)
+
+    # Add the output Layers
+    output_layer1 = layers.Dense(50, activation="relu")(lstm_layer)
+    output_layer1 = layers.Dropout(0.25)(output_layer1)
+    output_layer2 = layers.Dense(1, activation="sigmoid")(output_layer1)
+
+    # Compile the model
+    model = models.Model(inputs=input_layer, outputs=output_layer2)
+    model.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy')
+    
+    return model
+
+classifier = create_rnn_gru()
+accuracy = train_model(classifier, train_seq_x, train_y, valid_seq_x, is_neural_net=True)
+print("RNN-GRU, Word Embeddings: %.10f" % accuracy)
+
+#%% BIDIRECTIONAL RECURRENT NEURAL NETWORK (GRU)
+def create_bidirectional_rnn():
+    # Add an Input Layer
+    input_layer = layers.Input((70, ))
+
+    # Add the word embedding Layer
+    embedding_layer = layers.Embedding(len(word_index) + 1, 300, weights=[embedding_matrix], trainable=False)(input_layer)
+    embedding_layer = layers.SpatialDropout1D(0.3)(embedding_layer)
+
+    # Add the LSTM Layer
+    lstm_layer = layers.Bidirectional(layers.GRU(100))(embedding_layer)
+
+    # Add the output Layers
+    output_layer1 = layers.Dense(50, activation="relu")(lstm_layer)
+    output_layer1 = layers.Dropout(0.25)(output_layer1)
+    output_layer2 = layers.Dense(1, activation="sigmoid")(output_layer1)
+
+    # Compile the model
+    model = models.Model(inputs=input_layer, outputs=output_layer2)
+    model.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy')
+    
+    return model
+
+classifier = create_bidirectional_rnn()
+accuracy = train_model(classifier, train_seq_x, train_y, valid_seq_x, is_neural_net=True)
+print("RNN-Bidirectional, Word Embeddings: %.10f" % accuracy)

@@ -9,6 +9,8 @@ import os
 import pandas as pd
 import numpy as np
 
+from sklearn.datasets import load_iris
+import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 from nltk.tokenize import word_tokenize
@@ -64,8 +66,29 @@ for stopword in x:
 
 vectorizer = TfidfVectorizer(stop_words=my_stopwords)
 X = vectorizer.fit_transform(documentstxt)
+Xdf = pd.DataFrame(X.toarray())
 
 df_freq_objectid = data.groupby("Object ID", sort=True).count().nlargest(20, columns=('Incidentnummer')).astype(np.uintc)['Incidentnummer']
+
+# Bepaal optimaal aantal clusters via elbow methode
+
+
+# X = pd.DataFrame(iris.data, columns=iris['feature_names'])
+# print(X)
+data = Xdf
+
+sse = {}
+for k in range(2, 5):
+    kmeans = KMeans(n_clusters=k, max_iter=15).fit(data)
+    data["clusters"] = kmeans.labels_
+    print(data["clusters"])
+    sse[k] = kmeans.inertia_ # Inertia: Sum of distances of samples to their closest cluster center
+plt.figure()
+plt.plot(list(sse.keys()), list(sse.values()))
+plt.xlabel("Number of cluster")
+plt.ylabel("SSE")
+plt.show()
+
 
 true_k = len(df_freq_objectid)
 model = KMeans(n_clusters=true_k, init='k-means++', max_iter=100, n_init=1)

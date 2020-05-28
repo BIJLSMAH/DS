@@ -771,52 +771,52 @@ for i in range(0, len(documentslst)):
 # class_weight = ['balanced']
 # penalty = ['l2']
 
-param_grid = {'C': C,
-               'multi_class': multi_class,
-               'solver': solver,
-               'class_weight': class_weight,
-               'penalty': penalty}
+# param_grid = {'C': C,
+#                'multi_class': multi_class,
+#                'solver': solver,
+#                'class_weight': class_weight,
+#                'penalty': penalty}
 
 # Create a base model
-lrc = LogisticRegression(random_state=8)
+# lrc = LogisticRegression(random_state=8)
 
 # Manually create the splits in CV in order to be able to fix a random_state (GridSearchCV doesn't have that argument)
-cv_sets = ShuffleSplit(n_splits = 3, test_size = .33, random_state = 8)
+# cv_sets = ShuffleSplit(n_splits = 3, test_size = .33, random_state = 8)
 
 # Instantiate the grid search model
-grid_search = GridSearchCV(estimator=lrc, 
-                           param_grid=param_grid,
-                           scoring='accuracy',
-                           cv=cv_sets,
-                           verbose=1)
+# grid_search = GridSearchCV(estimator=lrc, 
+#                            param_grid=param_grid,
+#                            scoring='accuracy',
+#                            cv=cv_sets,
+#                            verbose=1)
 
 # Fit the grid search to the data
-grid_search.fit(features_train, labels_train)
+# grid_search.fit(features_train, labels_train)
 
-print("The best hyperparameters from Grid Search are:")
-print(grid_search.best_params_)
-print("")
-print("The mean accuracy of a model with these hyperparameters is:")
-print(grid_search.best_score_)
+# print("The best hyperparameters from Grid Search are:")
+# print(grid_search.best_params_)
+# print("")
+# print("The mean accuracy of a model with these hyperparameters is:")
+# print(grid_search.best_score_)
 
-best_lrc = grid_search.best_estimator_
-best_lrc
+# best_lrc = grid_search.best_estimator_
+# best_lrc
 
-best_lrc.fit(features_train, labels_train)
+# best_lrc.fit(features_train, labels_train)
 
-lrc_pred = best_lrc.predict(features_test)
+# lrc_pred = best_lrc.predict(features_test)
 
 # Training accuracy
-print("The training accuracy is: ")
-print(accuracy_score(labels_train, best_lrc.predict(features_train)))
+# print("The training accuracy is: ")
+# print(accuracy_score(labels_train, best_lrc.predict(features_train)))
 
 # Test accuracy
-print("The test accuracy is: ")
-print(accuracy_score(labels_test, lrc_pred))
+# print("The test accuracy is: ")
+# print(accuracy_score(labels_test, lrc_pred))
 
 # Classification report
-print("Classification report")
-print(classification_report(labels_test,lrc_pred))
+# print("Classification report")
+# print(classification_report(labels_test,lrc_pred))
 
 # aux_df = df[['Category', 'Category_Code']].drop_duplicates().sort_values('Category_Code')
 # conf_matrix = confusion_matrix(labels_test, lrc_pred)

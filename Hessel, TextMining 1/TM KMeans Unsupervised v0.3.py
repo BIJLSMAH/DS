@@ -43,8 +43,24 @@ os.chdir(hoofdmap)
 
 # Nu eerst even werken met een subset.
 
-data = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3-subset.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
-data = data[['Incidentnummer', 'Korte omschrijving Details', 'Verzoek', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
+# data = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3-subset.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
+data = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
+data = data[['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Verzoek', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
+# Filter de events eruit
+data=data.loc[data.index[data['Soort incident']!="Event"]]
+
+df_freq_objectid = data.groupby('Object ID', sort=True).count().nlargest(50, columns=('Incidentnummer')).astype(np.uintc)['Incidentnummer']
+df_freq_inctype = data.groupby('Soort incident', sort=True).count().nlargest(1000, columns=('Incidentnummer')).astype(np.uintc)['Incidentnummer']
+
+# We hebben het nog steeds over erg veel data en erg veel intern geheugen dat 
+# moet worden gealloceerd. We zijn dus verplicht om met een steekproef verder te 
+# gaan
+
+data = data[data['Object ID'].isin(df_freq_objectid.index)]
+
+steekproefgrootte = 20000
+chosen_idx = np.random.choice(len(data), replace=False, size=((len(data)>steekproefgrootte)*steekproefgrootte)+((len(data)<=steekproefgrootte)*len(data)))
+data = data.iloc[chosen_idx]
 
 # KMeans zorgt voor het onderkennen groepen (unsupervised) in data.
 # Helaas werkt KMeans alleen met cijfers en getallen. Daarom is het
@@ -64,22 +80,46 @@ for stopword in x:
    if stopword not in my_stopwords:
        my_stopwords.append(stopword)
 
-vectorizer = TfidfVectorizer(stop_words=my_stopwords)
+vectorizer = TfidfVectorizer(stop_words=my_stopwords,max_features=300)
 X = vectorizer.fit_transform(documentstxt)
 Xdf = pd.DataFrame(X.toarray())
 
-df_freq_objectid = data.groupby("Object ID", sort=True).count().nlargest(20, columns=('Incidentnummer')).astype(np.uintc)['Incidentnummer']
-
 # Bepaal optimaal aantal clusters via elbow methode
+def calculate_wcss(data):
+    wcss = {}
+    for n in range(2, 51, 5):
+        kmeans = KMeans(n_clusters=n)
+        kmeans.fit(X=data)
+        wcss[n] = kmeans.inertia_ # Inertia: Sum of distances of samples to their closest cluster center
+        print(n)
+    return wcss
 
 
 # X = pd.DataFrame(iris.data, columns=iris['feature_names'])
 # print(X)
-data = Xdf
+elbow = calculate_wcss(Xdf)
+plt.figure()
+plt.plot(list(elbow.keys()), list(elbow.values()))
+plt.xlabel("Number of clusters")
+plt.ylabel("SSE")
+plt.show()
+
+import sklearn as sl
+from sklearn.preprocessing import StandardScaler as ss
+from sklearn.decomposition import PCA 
+
+st = ss().fit_transform(Xdf)
+pca = PCA(0.80)
+pc = pca.fit_transform(st) # << to retain the components in an object
+pc
+
+#pca.explained_variance_ratio_
+print ( "Components = ", pca.n_components_ , ";\nTotal explained variance = ",
+      round(pca.explained_variance_ratio_.sum(),5)  )
 
 sse = {}
-for k in range(2, 5):
-    kmeans = KMeans(n_clusters=k, max_iter=15).fit(data)
+for k in range(17, 18):
+    kmeans = KMeans(n_clusters=k, max_iter=15).fit(Xdf)
     data["clusters"] = kmeans.labels_
     print(data["clusters"])
     sse[k] = kmeans.inertia_ # Inertia: Sum of distances of samples to their closest cluster center
@@ -90,7 +130,8 @@ plt.ylabel("SSE")
 plt.show()
 
 
-true_k = len(df_freq_objectid)
+# true_k = len(df_freq_objectid)
+true_k = 17 # berekend in de stap hiervoor
 model = KMeans(n_clusters=true_k, init='k-means++', max_iter=100, n_init=1)
 model.fit(X)
 
@@ -115,6 +156,23 @@ Y = vectorizer.transform(["Mijn Outlook is ermee gestopt !"])
 prediction = model.predict(Y)
 print(prediction)
 
+Y = vectorizer.transform(["Kan mijn netwerkschijven niet meer vinden !"])
+prediction = model.predict(Y)
+print(prediction)
+
+Y = vectorizer.transform(["Kan niet inloggen !"])
+prediction = model.predict(Y)
+print(prediction)
+
+Y = vectorizer.transform(["Outlook hangt bij afdrukken !"])
+prediction = model.predict(Y)
+print(prediction)
+
+Y = vectorizer.transform(["Wachtwoord is verlopen !"])
+prediction = model.predict(Y)
+print(prediction)
+
+
 # from nltk.corpus import movie_reviews
 # nltk.download('movie_reviews')
 
@@ -126,7 +184,7 @@ for x in documentslst:
         
 # Bepaal de meest gebruikte woorden.
 all_words = nltk.FreqDist(w.lower() for w in all_words)
-word_features = list(all_words)[:20]
+word_features = list(all_words)[:]
 def document_features(document):
     document_words = set()
     for d in document:
@@ -139,3 +197,12 @@ def document_features(document):
 
 for i in range(0, len(documentslst)):
     print(document_features(documentslst[i]))
+
+data['counter'] = 1
+group_data = data.groupby(['clusters','Object ID'])['counter'].sum() #sum function
+print(group_data)
+
+plt.figure()
+plt.imshow(group_data, cmap='hot', interpolation='nearest')
+plt.show()
+

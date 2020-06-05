@@ -1,3 +1,4 @@
+import os
 import re
 import numpy as np
 import pandas as pd
@@ -10,6 +11,10 @@ def opschonen_incidenten(incidenten):
     # Verwijder newlines uit verzoekveld
     incidenten['Verzoek'] = incidenten['Verzoek']\
             .str.replace(r"\n", " ", regex=True)
+    incidenten['Verzoek'] = incidenten['Verzoek']\
+            .str.replace(r"\r", " ", regex=True)
+    incidenten['Verzoek'] = incidenten['Verzoek']\
+            .str.replace(r"\t", " ", regex=True)
     return incidenten
 
 def verwijder_datum_naam(incidenten):
@@ -24,9 +29,9 @@ def apply_regex(incident, regex_expr):
         omschrijving = incident['Omschrijving_verzoek']
     else:
         # Detecteer de regex.
-        zoekresultaat = re.search(regex_expr, incident['Verzoek'])
+        zoekresultaat = re.search(regex_expr, incident['Verzoek'].lower())
         # Als de regex gevonden is, geef dan de eerste capture group terug
-        omschrijving = zoekresultaat.group(1) if zoekresultaat\
+        omschrijving = zoekresultaat.group(1).strip() if zoekresultaat\
                 is not None else None
     return omschrijving
 
@@ -34,13 +39,13 @@ def apply_regex_rest(incident, regex_expr):
     if incident['Omschrijving_verzoek'] is not None:
         omschrijving = None
     elif incident['Omschrijving_verzoek_rest'] is not None:
-        omschrijving = incident['Omschrijving_verzoek_rest']
+        omschrijving = incident['Omschrijving_verzoek_rest'].lower()
     else:
         # Detecteer de regex.
-        zoekresultaat = re.search(regex_expr, incident['Verzoek'])
+        zoekresultaat = re.search(regex_expr, incident['Verzoek'].lower())
         # Als de regex gevonden is, geef dan de eerste capture group terug
         omschrijving = zoekresultaat.group(1) if zoekresultaat\
-                is not None else None
+                is not None else incident['Verzoek'].lower()
     return omschrijving
 
 def construct_query(oplossing):
@@ -94,24 +99,32 @@ def detecteer_regex(incidenten, oplossingen):
     oplossingen = oplossingen.reindex(len_regex).reset_index(drop=True)
 
     # Begin bovenaan in de lijst met oplossingen.
-    for verzoek_reg in oplossingen_selectie['Verzoek_regex']:
+    rest_regex= list()
+    rest_regex.append('^omschrijving\\ van\\ de\\ storing:(.+?)volledige\\ naam:.*')
+    rest_regex.append('^omschrijving\\ storing:(.+?)volledige\\ naam:.*')
+    rest_regex.append('^omschrijving\\ van\\ het\\ probleem:(.+?)volledige\\ dienst:.*')
+    for verzoek_reg in rest_regex:
         incidenten['Omschrijving_verzoek_rest'] =\
                 incidenten.apply(lambda row: apply_regex_rest(row, verzoek_reg), axis=1)
 
     return incidenten
 
 print("Lezen...")
-incidenten = pd.read_csv("../data/raw/20190711 - Incidenten Export - PROD.csv",
-        sep = ";", low_memory=False)
+mapGebruikers = "C:\\Users\\"
+mapGebruiker = os.getlogin()
+mapTM = r'\Documents\Github\DS\Hessel, TextMining 1'
+hoofdmap = "%s%s%s" %(mapGebruikers, mapGebruiker, mapTM)
+os.chdir(hoofdmap)
+
+incidenten = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
 incidenten = opschonen_incidenten(incidenten)
 incidenten = verwijder_datum_naam(incidenten)
 
-oplossingen = pd.read_csv("../data/processed/Standaardoplossingen_regex.csv",
-        sep = ",", low_memory=False)
+oplossingen = pd.read_csv(r'data/Standaardoplossingen_processed_regex.csv', sep = ",", low_memory=False)
 
 incidenten = detecteer_regex(incidenten, oplossingen)
 print(incidenten['Omschrijving_verzoek'].apply(lambda x: True if x is not None else False).sum())
 print(incidenten['Omschrijving_verzoek_rest'].apply(lambda x: True if x is not None else False).sum())
 
-incidenten.to_csv("../data/processed/20190711 - Incidenten Export - Omschrijvingen.csv", 
+incidenten.to_csv(r'data/Incidenten Processed Export - Omschrijvingen.csv', 
         index = False, encoding="UTF-8")

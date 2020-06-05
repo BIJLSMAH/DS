@@ -27,20 +27,11 @@ mapTM = r'\Documents\Github\DS\Hessel, TextMining 1'
 hoofdmap = "%s%s%s" %(mapGebruikers, mapGebruiker, mapTM)
 os.chdir(hoofdmap)
 
-vbdata = open('data/corpus', encoding="utf-8").read()
-vblabels, vbtexts = [], []
-for i, line in enumerate(vbdata.split("\n")):
-    content = line.split()
-    vblabels.append(content[0])
-    vbtexts.append(" ".join(content[1:]))
-
-vbtrainDF = pd.DataFrame()
-vbtrainDF['text'] = vbtexts
-vbtrainDF['label'] = vblabels
-
 # load the dataset incidenten
 df = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
-df = df[['Incidentnummer', 'Korte omschrijving Details', 'Verzoek', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
+df = data[['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Verzoek', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
+# Filter de events eruit
+df=data.loc[data.index[data['Soort incident']!="Event"]]
 # replacing na values in OBJECT ID with Onbekend 
 df['Object ID'].fillna("Onbekend", inplace = True) 
 
@@ -71,13 +62,6 @@ inctrainDF['text'] = df['Korte omschrijving Details']
 #%% OPDELEN IN TRAIN EN TEST
 # split the dataset into training and validation datasets 
 print("Split dataset in train- en testset . . .")
-
-vbtrain_x, vbvalid_x, vbtrain_y, vbvalid_y = model_selection.train_test_split(vbtrainDF['text'], vbtrainDF['label'])
-
-# label encode the target variable 
-vbencoder = preprocessing.LabelEncoder()
-vbtrain_y = vbencoder.fit_transform(vbtrain_y)
-vbvalid_y = vbencoder.fit_transform(vbvalid_y)     
 
 inctrain_x, incvalid_x, inctrain_y, incvalid_y = model_selection.train_test_split(inctrainDF['text'], inctrainDF['label'])
 

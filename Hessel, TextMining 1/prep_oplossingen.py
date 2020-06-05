@@ -81,6 +81,7 @@ def genereer_regex(oplossingen):
         text_zinnen = verzoek_text.splitlines()
         regex_zinnen = text_zinnen
         regex_zinnen = [zin.strip() for zin in regex_zinnen]
+        regex_zinnen = [zin.lower() for zin in regex_zinnen]
         regex_zinnen = [re.escape(zin) for zin in regex_zinnen]
         for i in range(len(regex_zinnen)):
             if i == omschrijvingszin:
@@ -103,7 +104,13 @@ def genereer_regex(oplossingen):
     oplossingen.reset_index(drop=True, inplace=True)
     return oplossingen
 
-os.chdir(r'C:\Users\Administrator\Documents\GitHub\DS\Hessel, TextMining 1')
+
+print("Load dataset . . .")
+mapGebruikers = "C:\\Users\\"
+mapGebruiker = os.getlogin()
+mapTM = r'\Documents\Github\DS\Hessel, TextMining 1'
+hoofdmap = "%s%s%s" %(mapGebruikers, mapGebruiker, mapTM)
+os.chdir(hoofdmap)
 oplossingen = pd.read_excel("data/Standaardoplossingen.xlsx")
 oplossingen = opschonen_oplossingen(oplossingen)
 # Filter 'Ja/Nee' uit de oplossingen om een meer uniforme aanpak voor de regex te creeeren
@@ -111,5 +118,5 @@ oplossingen = filter_janee(oplossingen)
 oplossingen = genereer_regex(oplossingen)
 print(oplossingen)
 
-oplossingen.to_csv("data/Standaardoplossingen_regex.csv", 
+oplossingen.to_csv("data/Standaardoplossingen_processed_regex.csv", 
         index = False, encoding="UTF-8")

@@ -9,12 +9,11 @@ import os
 import pandas as pd
 import numpy as np
 
-from sklearn.datasets import load_iris
 import matplotlib.pyplot as plt
+import string
 from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
 from sklearn.cluster import KMeans
 
 print("Load dataset . . .")
@@ -58,7 +57,7 @@ df_freq_inctype = data.groupby('Soort incident', sort=True).count().nlargest(100
 
 data = data[data['Object ID'].isin(df_freq_objectid.index)]
 
-steekproefgrootte = 20000
+steekproefgrootte = 40000
 chosen_idx = np.random.choice(len(data), replace=False, size=((len(data)>steekproefgrootte)*steekproefgrootte)+((len(data)<=steekproefgrootte)*len(data)))
 data = data.iloc[chosen_idx]
 
@@ -66,13 +65,7 @@ data = data.iloc[chosen_idx]
 # Helaas werkt KMeans alleen met cijfers en getallen. Daarom is het
 # eerst noodzakelijk de teksten de vectorizeren.
 
-documentstxt = data['Korte omschrijving Details']
-documentslst = list()
-for d in documentstxt:
-    documentslst.append(word_tokenize(d))
-nltk.download('stopwords')
-my_stopwords = stopwords.words('dutch')
-
+my_stopwords=list()
 f = open(r'data/stopwords_nl.txt', 'r')
 x = f.read().splitlines()
 f.close()
@@ -80,6 +73,25 @@ for stopword in x:
    if stopword not in my_stopwords:
        my_stopwords.append(stopword)
 
+documentstxt = data['Korte omschrijving Details']
+documentstxtclean = list()
+for d in documentstxt:
+    cleanw = ''
+    res = d.split()
+    for w in res:
+        if (w.lower() not in my_stopwords) & (len(w)>2):
+            cleanw = cleanw + ' ' + w
+    documentstxtclean.append(cleanw.lower())
+
+documentslstall = list()
+for d in documentstxtclean:
+    documentslstall.append(word_tokenize(d))
+
+documentslst = list()
+for x in documentslstall:
+    if x not in my_stopwords:
+        documentslst.append(x)
+        
 vectorizer = TfidfVectorizer(stop_words=my_stopwords,max_features=300)
 X = vectorizer.fit_transform(documentstxt)
 Xdf = pd.DataFrame(X.toarray())
@@ -87,7 +99,7 @@ Xdf = pd.DataFrame(X.toarray())
 # Bepaal optimaal aantal clusters via elbow methode
 def calculate_wcss(data):
     wcss = {}
-    for n in range(2, 51, 5):
+    for n in range(2, 51, 4):
         kmeans = KMeans(n_clusters=n)
         kmeans.fit(X=data)
         wcss[n] = kmeans.inertia_ # Inertia: Sum of distances of samples to their closest cluster center
@@ -104,21 +116,21 @@ plt.xlabel("Number of clusters")
 plt.ylabel("SSE")
 plt.show()
 
-import sklearn as sl
-from sklearn.preprocessing import StandardScaler as ss
-from sklearn.decomposition import PCA 
+# import sklearn as sl
+# from sklearn.preprocessing import StandardScaler as ss
+# from sklearn.decomposition import PCA 
 
-st = ss().fit_transform(Xdf)
-pca = PCA(0.80)
-pc = pca.fit_transform(st) # << to retain the components in an object
-pc
+# st = ss().fit_transform(Xdf)
+# pca = PCA(0.80)
+# pc = pca.fit_transform(st) # << to retain the components in an object
+# pc
 
 #pca.explained_variance_ratio_
-print ( "Components = ", pca.n_components_ , ";\nTotal explained variance = ",
-      round(pca.explained_variance_ratio_.sum(),5)  )
+# rint ( "Components = ", pca.n_components_ , ";\nTotal explained variance = ",
+#       round(pca.explained_variance_ratio_.sum(),5)  )
 
 sse = {}
-for k in range(17, 18):
+for k in range(20, 21):
     kmeans = KMeans(n_clusters=k, max_iter=15).fit(Xdf)
     data["clusters"] = kmeans.labels_
     print(data["clusters"])
@@ -130,19 +142,23 @@ plt.ylabel("SSE")
 plt.show()
 
 
-# true_k = len(df_freq_objectid)
-true_k = 17 # berekend in de stap hiervoor
+print("Top terms per cluster:")
+
+f = open(r'data/uitvoerclusters.txt', 'w')
+
+true_k = 20 # berekend in de stap hiervoor
 model = KMeans(n_clusters=true_k, init='k-means++', max_iter=100, n_init=1)
 model.fit(X)
-
-print("Top terms per cluster:")
 order_centroids = model.cluster_centers_.argsort()[:, ::-1]
 terms = vectorizer.get_feature_names()
 for i in range(true_k):
-    print("Cluster %d:" % i),
-    for ind in order_centroids[i, :10]:
-        print(' %s' % terms[ind]),
-    print
+    s = str(i) + ' '
+    f.write("Cluster %s" % s)
+    for ind in order_centroids[i, :15]:
+        f.write(terms[ind] + ','),
+    f.write("\n")
+
+f.close()
 
 print("\n")
 print("Prediction")
@@ -172,11 +188,14 @@ Y = vectorizer.transform(["Wachtwoord is verlopen !"])
 prediction = model.predict(Y)
 print(prediction)
 
+Y = vectorizer.transform(["CW is verlopen !"])
+prediction = model.predict(Y)
+print(prediction)
 
 # from nltk.corpus import movie_reviews
 # nltk.download('movie_reviews')
 
-# Bepaald de woordfrequentie binnen alle documenten
+# Bepaal de woordfrequentie binnen alle documenten
 all_words = list()
 for x in documentslst:
     for y in x:
@@ -184,7 +203,7 @@ for x in documentslst:
         
 # Bepaal de meest gebruikte woorden.
 all_words = nltk.FreqDist(w.lower() for w in all_words)
-word_features = list(all_words)[:]
+word_features = list(all_words)[:100]
 def document_features(document):
     document_words = set()
     for d in document:
@@ -200,9 +219,4 @@ for i in range(0, len(documentslst)):
 
 data['counter'] = 1
 group_data = data.groupby(['clusters','Object ID'])['counter'].sum() #sum function
-print(group_data)
-
-plt.figure()
-plt.imshow(group_data, cmap='hot', interpolation='nearest')
-plt.show()
 

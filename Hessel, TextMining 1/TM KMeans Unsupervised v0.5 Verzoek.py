@@ -81,7 +81,7 @@ for d in documentstxt:
     res = d.split()
     for w in res:
         if (w.lower() not in my_stopwords) & (len(w)>2):
-            cleanw = cleanw + ' ' + w
+            cleanw = cleanw + ' ' + w.lower()
     documentstxtclean.append(cleanw.lower())
 
 documentslstall = list()
@@ -90,12 +90,22 @@ for d in documentstxtclean:
 
 documentslst = list()
 for x in documentslstall:
-    if x not in my_stopwords:
-        documentslst.append(x)
+    documentslstelement = list()
+    for y in range(0, len(x)):
+        if (x[y] not in my_stopwords) & (len(x[y])>2):
+            documentslstelement.append(x[y])
+    documentslst.append(documentslstelement)
 
-my_stopwords.sort()        
+documentstextclean = list()
+for x in documentslst:
+    documentstxtelement = ''
+    for y in range(0, len(x)):
+        if (x[y] not in my_stopwords) & (len(x[y])>2):
+            documentstxtelement = documentstxtelement + ' ' + x[y]
+    documentstextclean.append(documentstxtelement)
+        
 vectorizer = TfidfVectorizer(stop_words=my_stopwords,max_features=300)
-X = vectorizer.fit_transform(documentstxt)
+X = vectorizer.fit_transform(documentstxtclean)
 Xdf = pd.DataFrame(X.toarray())
 
 # Bepaal optimaal aantal clusters via elbow methode
@@ -108,6 +118,8 @@ def calculate_wcss(data):
         print(n)
     return wcss
 
+# X = pd.DataFrame(iris.data, columns=iris['feature_names'])
+# print(X)
 elbow = calculate_wcss(Xdf)
 plt.figure()
 plt.plot(list(elbow.keys()), list(elbow.values()))
@@ -121,7 +133,6 @@ k = 20
 kmeans = KMeans(n_clusters=k, max_iter=15).fit(Xdf)
 data["clusters"] = kmeans.labels_
 sse[k] = kmeans.inertia_ # Inertia: Sum of distances of samples to their closest cluster center
-
     
 print("Top terms per cluster:")
 
@@ -199,6 +210,11 @@ def document_features(document):
 
 for i in range(0, len(documentslst)):
     print(document_features(documentslst[i]))
+
+
+#NB. Onderstaande code levert informatie op over het aantal OBJECT ID's per cluster
+# deze group_data kan worden gekopieerd en geplakt in een Excel werkmap.
+# Hier kan een matrix worden gemaakt d.m.v. een pivot table.
 
 data['counter'] = 1
 group_data = data.groupby(['clusters','Object ID'])['counter'].sum() #sum function

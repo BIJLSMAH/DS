@@ -9,10 +9,9 @@ Created on Thu May 14 14:46:33 2020
 from sklearn import model_selection, preprocessing, linear_model, naive_bayes, metrics, svm
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn import decomposition, ensemble
-import string
 import numpy as np
 import pandas as pd
-import xgboost, numpy, textblob, string, 
+import xgboost, numpy, textblob, string
 from keras.preprocessing import text, sequence
 from keras import layers, models, optimizers
 import os
@@ -68,6 +67,7 @@ for stopword in x:
 df['KOD'] = df['Korte omschrijving Details'].str.lower().str.split()
 df['KOD'] = df['KOD'].apply(lambda x: [item for item in x if item not in my_stopwords])
 df['KOD'] = df['KOD'].apply(lambda x: [item for item in x if len(item)>2])
+df['KOD'] = df['KOD'].apply(lambda x: ' '.join(map(str,x)))
 
 inctrainDF = pd.DataFrame()
 inctrainDF['label'] = df['Object ID']
@@ -78,6 +78,10 @@ inctrainDF['text'] = df['KOD']
 print("Split dataset in train- en testset . . .")
 
 inctrain_x, incvalid_x, inctrain_y, incvalid_y = model_selection.train_test_split(inctrainDF['text'], inctrainDF['label'])
+inctrain_x_original = inctrain_x
+inctrain_y_original = inctrain_y
+incvalid_x_original = incvalid_x
+incvalid_y_original = incvalid_y
 
 # label encode the target variable 
 incencoder = preprocessing.LabelEncoder()
@@ -132,10 +136,10 @@ train_seq_x = sequence.pad_sequences(token.texts_to_sequences(train_x), maxlen=3
 valid_seq_x = sequence.pad_sequences(token.texts_to_sequences(valid_x), maxlen=300)
 
 # create token-embedding mapping
-embeddings_index = {}
+embedding_index={}
 embedding_matrix = numpy.zeros((len(word_index) + 1, 300))
 for word, i in word_index.items():
-    embedding_vector = embeddings_index.get(word)
+    embedding_vector = embedding_index.get(word)
     if embedding_vector is not None:
         embedding_matrix[i] = embedding_vector
 
@@ -186,7 +190,7 @@ topic_word = lda_model.components_
 vocab = count_vect.get_feature_names()
 
 # view the topic models
-n_top_words = 10
+n_top_words = 15
 topic_summaries = []
 for i, topic_dist in enumerate(topic_word):
     topic_words = numpy.array(vocab)[numpy.argsort(topic_dist)][:-(n_top_words+1):-1]
@@ -241,6 +245,16 @@ def train_model(classifier, feature_vector_train, label, feature_vector_valid, i
 accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_count, train_y, xvalid_count)
 print ("NB, Count Vectors: %.10f" % accuracy)
 
+model=naive_bayes.MultinomialNB()
+model.fit(xtrain_count,train_y)
+predictions = model.predict(xvalid_count)
+xtest = pd.DataFrame(xvalid_count.copy().toarray())
+xtest['actual'] = incencoder.inverse_transform(valid_y)
+xtest['prediction']=incencoder.inverse_transform(predictions)
+xtest['KOD'] = incvalid_x_original.reset_index().text
+xtest['actual2'] = incvalid_y_original.reset_index().label
+
+
 # Naive Bayes on Word Level TF IDF Vectors
 accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_tfidf, train_y, xvalid_tfidf)
 print ("NB, WordLevel TF-IDF:  %.10f" % accuracy)
@@ -279,15 +293,15 @@ print ("LR, CharLevel Vectors: %.10f" % accuracy)
 accuracy = train_model(svm.SVC(), xtrain_count, train_y, xvalid_count)
 print ("SVM, Count Vectors: %.10f" % accuracy)
 
-# VM on Ngram Level TF IDF Vectors
+# SVM on Ngram Level TF IDF Vectors
 accuracy = train_model(svm.SVC(), xtrain_tfidf, train_y, xvalid_tfidf)
 print ("SVM, WordLevel TF-IDF:  %.10f" % accuracy)
 
-# VM on Ngram Level Ngram Vectors
+# SVM on Ngram Level Ngram Vectors
 accuracy = train_model(svm.SVC(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram)
 print ("SVM, N-Gram Vectors:  %.10f" % accuracy)
 
-# VM on Ngram Level Charlevel Vectors
+# SVM on Ngram Level Charlevel Vectors
 accuracy = train_model(svm.SVC(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram_chars)
 print ("SVM, CharLevel Vectors: %.10f" % accuracy)
 
@@ -338,7 +352,7 @@ print ("Xgb, CharLevel Vectors: %.10f" % accuracy)
 
 def create_cnn():
     # Add an Input Layer
-    input_layer = layers.Input((70, ))
+    input_layer = layers.Input((300, ))
 
     # Add the word embedding Layer
     embedding_layer = layers.Embedding(len(word_index) + 1, 300, weights=[embedding_matrix], trainable=False)(input_layer)

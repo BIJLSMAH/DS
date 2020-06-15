@@ -38,8 +38,8 @@ if ask_user('Wilt u dataset laden'):
     hoofdmap = "%s%s%s" %(mapGebruikers, mapGebruiker, mapTM)
     os.chdir(hoofdmap)
 
-    data = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
-    data = data[['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Verzoek', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
+    data = pd.read_excel(r'data\Incidenten_SD_2018_2019_totaal.xlsm')
+    data = data[['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'verzoek_clean', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
 
     # Filter de events eruit
     data=data.loc[data.index[data['Soort incident']!="Event"]]
@@ -74,7 +74,9 @@ if ask_user('Wilt u de textmining uitvoeren'):
         if stopword not in my_stopwords:
             my_stopwords.append(stopword)
 
-    documentstxt = data['Korte omschrijving Details']
+    data = data[data.index.isin(data['verzoek_clean'].dropna().index)]
+
+    documentstxt = data['verzoek_clean']
     documentstxtclean = list()
     for d in documentstxt:
         cleanw = ''
@@ -139,9 +141,9 @@ else:
 #%% Wegschrijven woorden per cluster
 if ask_user('Matrix woorden per cluster wegschrijven'):
     true_k = k # berekend in de stap hiervoor
-    print('Top 15 woorden per cluster weggeschreven naar \'uitvoerclusters_korte_omschrijving_details_k_'+ str(true_k) + '.csv\'')
+    print('Top 15 woorden per cluster weggeschreven naar \'uitvoerclusters_verzoek_k_'+ str(true_k) + '.csv\'')
 
-    f = open(r'data/uitvoerclusters_korte_omschrijving_details_k_'+ str(true_k) + '.csv', 'w')
+    f = open(r'data/uitvoerclusters_verzoek_k_'+ str(true_k) + '.csv', 'w')
 
     kmeans.fit(X)
     order_centroids = kmeans.cluster_centers_.argsort()[:, ::-1]
@@ -164,17 +166,18 @@ vectorizer = TfidfVectorizer(stop_words=my_stopwords,max_features=300)
 X = vectorizer.fit_transform(documentstxtclean)
 Xdf = pd.DataFrame(X.toarray())
 
-Y = vectorizer.transform(["problemen met de sessie"])
+Y = vectorizer.transform(["printer probleem"])
 prediction = kmeans.predict(Y)
 print(prediction)
+
 #%% Bepaal aantal Object ID per cluster t.b.v. Pivot
 if ask_user('Maken input voor object id\'s per cluster'):
     true_k = k
     data['freq'] = 1 
     group_data = data.groupby(['clusters','Object ID'])['freq'].sum() #sum function
     group_data.reset_index()
-    print('Object ID\'s per cluster wegschrijven naar \'uitvoer_object_ids_per_cluster_kod_k_' + str(true_k) + '.csv\'')
-    group_data.to_csv(r'data/uitvoerobject_ids_per_cluster_kod_k_'+ str(true_k) + '.csv')
+    print('Object ID\'s per cluster wegschrijven naar \'uitvoer_object_ids_per_cluster_vrz_k_' + str(true_k) + '.csv\'')
+    group_data.to_csv(r'data/uitvoerobject_ids_per_cluster_vrz_k_'+ str(true_k) + '.csv')
 
 else:
     print('Geen verwerking voor Object ID\'s per cluster uitgevoerd !')

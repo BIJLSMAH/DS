@@ -117,7 +117,7 @@ if ask_user('Bepalen optimaal # clusters met elbow'):
 
     model = KMeans()
     visualizer = KElbowVisualizer(
-        model, k=range(2, 51, 4), metric='calinski_harabasz', timings=False)
+        model, k=range(2, 51, 1), metric='calinski_harabasz', timings=False)
 
     visualizer.fit(Xdf)        # Fit the data to the visualizer
     visualizer.show()          # Finalize and render the figure
@@ -130,7 +130,7 @@ else:
 if ask_user('Toevoegen clusters aan data'):
     print('Clustergegevens worden aan de dataset toegevoegd!')
     sse = {}
-    k = 10
+    k = 20
     kmeans = KMeans(n_clusters=k, max_iter=50).fit(Xdf)
     data['clusters'] = kmeans.labels_
     sse[k] = kmeans.inertia_ # Inertia: Sum of distances of samples to their closest cluster center

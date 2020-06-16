@@ -11,7 +11,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn import decomposition, ensemble
 import numpy as np
 import pandas as pd
-import xgboost, numpy, textblob, string
+import xgboost, numpy
 from keras.preprocessing import text, sequence
 from keras import layers, models, optimizers
 import os
@@ -45,7 +45,7 @@ df2 = df.groupby('Object ID').count()
 df2 = df2.nlargest(50 , 'Incidentnummer')
 df = df[df['Object ID'].isin(df2.index)]
 
-steekproefgrootte = 20000
+steekproefgrootte = 500000
 chosen_idx = np.random.choice(len(df), replace=False, size=((len(df)>steekproefgrootte)*steekproefgrootte)+((len(df)<=steekproefgrootte)*len(df)))
 df = df.iloc[chosen_idx]
 # inclabels, inctexts = [], []
@@ -145,7 +145,7 @@ for word, i in word_index.items():
 
 # 2.4 TEXT NLP BASED FEATURES
 print("2.4. FEATURE ENGINEERING: TEXT NLP FEATURES . . .")
-print ("Niet verder gebruikt, meer op Engelse taal gebaseerd")
+print ("2.4. Niet verder gebruikt, meer op Engelse taal gebaseerd")
 # trainDF['char_count'] = trainDF['text'].apply(len)
 # trainDF['word_count'] = trainDF['text'].apply(lambda x: len(x.split()))
 # trainDF['word_density'] = trainDF['char_count'] / (trainDF['word_count']+1)
@@ -183,18 +183,18 @@ print ("Niet verder gebruikt, meer op Engelse taal gebaseerd")
 # 2.5 TOPIC MODELLING
 # train a LDA Model
 print("2.5. FEATURE ENGINEERING: TOPIC MODELLING . . .")
-
-lda_model = decomposition.LatentDirichletAllocation(n_components=20, learning_method='online', max_iter=20)
-X_topics = lda_model.fit_transform(xtrain_count)
-topic_word = lda_model.components_ 
-vocab = count_vect.get_feature_names()
+print ("2.5. Niet verder gebruikt")
+# lda_model = decomposition.LatentDirichletAllocation(n_components=20, learning_method='online', max_iter=20)
+# X_topics = lda_model.fit_transform(xtrain_count)
+# topic_word = lda_model.components_ 
+# vocab = count_vect.get_feature_names()
 
 # view the topic models
-n_top_words = 15
-topic_summaries = []
-for i, topic_dist in enumerate(topic_word):
-    topic_words = numpy.array(vocab)[numpy.argsort(topic_dist)][:-(n_top_words+1):-1]
-    topic_summaries.append(' '.join(topic_words))
+# n_top_words = 15
+# topic_summaries = []
+# for i, topic_dist in enumerate(topic_word):
+#    topic_words = numpy.array(vocab)[numpy.argsort(topic_dist)][:-(n_top_words+1):-1]
+#    topic_summaries.append(' '.join(topic_words))
     
 #%% MODEL BUILDING
 # The final step in the text classification framework is to train a classifier 
@@ -245,16 +245,6 @@ def train_model(classifier, feature_vector_train, label, feature_vector_valid, i
 accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_count, train_y, xvalid_count)
 print ("NB, Count Vectors: %.10f" % accuracy)
 
-model=naive_bayes.MultinomialNB()
-model.fit(xtrain_count,train_y)
-predictions = model.predict(xvalid_count)
-xtest = pd.DataFrame(xvalid_count.copy().toarray())
-xtest['actual'] = incencoder.inverse_transform(valid_y)
-xtest['prediction']=incencoder.inverse_transform(predictions)
-xtest['KOD'] = incvalid_x_original.reset_index().text
-xtest['actual2'] = incvalid_y_original.reset_index().label
-
-
 # Naive Bayes on Word Level TF IDF Vectors
 accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_tfidf, train_y, xvalid_tfidf)
 print ("NB, WordLevel TF-IDF:  %.10f" % accuracy)
@@ -273,19 +263,19 @@ print ("NB, CharLevel Vectors: %.10f" % accuracy)
 # probabilities using a logistic/sigmoid function. 
 
 # Linear Classifier on Count Vectors
-accuracy = train_model(linear_model.LogisticRegression(), xtrain_count, train_y, xvalid_count)
+accuracy = train_model(linear_model.LogisticRegression(max_iter=4000), xtrain_count, train_y, xvalid_count)
 print ("LR, Count Vectors: %.10f" % accuracy)
 
 # Linear Classifier on Word Level TF IDF Vectors
-accuracy = train_model(linear_model.LogisticRegression(), xtrain_tfidf, train_y, xvalid_tfidf)
+accuracy = train_model(linear_model.LogisticRegression(max_iter=4000), xtrain_tfidf, train_y, xvalid_tfidf)
 print ("LR, WordLevel TF-IDF:  %.10f" % accuracy)
 
 # Linear Classifier on Ngram Level TF IDF Vectors
-accuracy = train_model(linear_model.LogisticRegression(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram)
+accuracy = train_model(linear_model.LogisticRegression(max_iter=4000), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram)
 print ("LR, N-Gram Vectors:  %.10f" % accuracy)
 
 # Linear Classifier on Character Level TF IDF Vectors
-accuracy = train_model(linear_model.LogisticRegression(), xtrain_tfidf_ngram_chars, train_y, xvalid_tfidf_ngram_chars)
+accuracy = train_model(linear_model.LogisticRegression(max_iter=4000), xtrain_tfidf_ngram_chars, train_y, xvalid_tfidf_ngram_chars)
 print ("LR, CharLevel Vectors: %.10f" % accuracy)
 
 #%% 3.3. SVM 
@@ -302,7 +292,7 @@ accuracy = train_model(svm.SVC(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngra
 print ("SVM, N-Gram Vectors:  %.10f" % accuracy)
 
 # SVM on Ngram Level Charlevel Vectors
-accuracy = train_model(svm.SVC(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram_chars)
+accuracy = train_model(svm.SVC(), xtrain_tfidf_ngram_chars, train_y, xvalid_tfidf_ngram_chars)
 print ("SVM, CharLevel Vectors: %.10f" % accuracy)
 
 #%% 3.4 RF on Word Level TF IDF Vectors
@@ -319,9 +309,33 @@ accuracy = train_model(ensemble.RandomForestClassifier(), xtrain_tfidf_ngram, tr
 print("RF, N-Gram Vectors: %.10f" % accuracy)
 
 # RF on Ngram Level Charlevel Vectors
-accuracy = train_model(ensemble.RandomForestClassifier(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram_chars)
+accuracy = train_model(ensemble.RandomForestClassifier(), xtrain_tfidf_ngram_chars, train_y, xvalid_tfidf_ngram_chars)
 print("RF, CharLevel Vectors: %.10f" % accuracy)
 
+#%% Uitwerken model met de beste score
+import cPickle
+
+if ask_user('Herberekenen model'):
+
+    model=naive_bayes.MultinomialNB()
+    model.fit(xtrain_count,train_y)
+    # bewaren berekende optimale model
+    with open(r'data/optimodel.pck', 'wb') as f:
+        cPickle.dump(model, f)
+else:
+    print('Model wordt geladen uit picklebestand  . . .')    
+
+with open(r'data/optimodel.pck', 'rb') as f:
+    model=cPickle.load(f)
+
+predictions = model.predict(xvalid_count)
+xtest = pd.DataFrame(xvalid_count.copy().toarray())
+xtest['actual'] = incencoder.inverse_transform(valid_y)
+xtest['prediction']=incencoder.inverse_transform(predictions)
+xtest['KOD'] = incvalid_x_original.reset_index().text
+xtest['actual2'] = incvalid_y_original.reset_index().label
+
+xtest.to_csv(r'data/resultaat.csv')
 #%% 3.5. Boosting model
 # Implementing Xtereme Gradient Boosting Model
 # Boosting models are another type of ensemble models part of tree 

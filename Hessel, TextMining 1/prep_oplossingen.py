@@ -111,7 +111,7 @@ mapGebruiker = os.getlogin()
 mapTM = r'\Documents\Github\DS\Hessel, TextMining 1'
 hoofdmap = "%s%s%s" %(mapGebruikers, mapGebruiker, mapTM)
 os.chdir(hoofdmap)
-oplossingen = pd.read_excel("data/Standaardoplossingen.xlsx")
+oplossingen = pd.read_excel("data/Standaardoplossingen42.xlsx")
 oplossingen = opschonen_oplossingen(oplossingen)
 # Filter 'Ja/Nee' uit de oplossingen om een meer uniforme aanpak voor de regex te creeeren
 oplossingen = filter_janee(oplossingen)

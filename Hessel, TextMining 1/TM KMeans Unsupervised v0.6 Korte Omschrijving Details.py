@@ -38,11 +38,18 @@ if ask_user('Wilt u dataset laden'):
     hoofdmap = "%s%s%s" %(mapGebruikers, mapGebruiker, mapTM)
     os.chdir(hoofdmap)
 
-    data = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
-    data = data[['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Verzoek', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
+#    data = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
+    data = pd.read_csv(r'data\Topdesk Incidenten Totaal Overzicht 2019-2020.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
+#   data = data[['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Verzoek', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
+    data = data[['Incident nummer', 'Datum aangemeld', 'Korte omschrijving', 'Impact', 'Soort incident', 'Categorie', 'Subcategorie', 'Object']]
+#   De volgende stap is nodig om de wijzigende kolomnamen te converteren voor een
+#   eenduidige naamgeving in het rest van het script.
 
+
+    data.columns = ['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Impact', 'Soort incident','Categorie', 'Subcategorie', 'Object ID']
     # Filter de events eruit
     data=data.loc[data.index[data['Soort incident']!="Event"]]
+
 
     # Bepaal de frequenties per gevonden Object ID in de top 50
     df_freq_objectid = data.groupby('Object ID', sort=True).count().nlargest(50, columns=('Incidentnummer')).astype(np.uintc)['Incidentnummer']
@@ -130,7 +137,7 @@ else:
 if ask_user('Toevoegen clusters aan data'):
     print('Clustergegevens worden aan de dataset toegevoegd!')
     sse = {}
-    k = 20
+    k = 12
     kmeans = KMeans(n_clusters=k, max_iter=50).fit(Xdf)
     data['clusters'] = kmeans.labels_
     sse[k] = kmeans.inertia_ # Inertia: Sum of distances of samples to their closest cluster center
@@ -164,7 +171,7 @@ vectorizer = TfidfVectorizer(stop_words=my_stopwords,max_features=300)
 X = vectorizer.fit_transform(documentstxtclean)
 Xdf = pd.DataFrame(X.toarray())
 
-Y = vectorizer.transform(["problemen met de sessie"])
+Y = vectorizer.transform(["probleem met printen"])
 prediction = kmeans.predict(Y)
 print(prediction)
 #%% Bepaal aantal Object ID per cluster t.b.v. Pivot

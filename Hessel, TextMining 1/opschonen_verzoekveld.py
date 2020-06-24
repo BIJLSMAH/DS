@@ -10,6 +10,8 @@ def opschonen_incidenten(incidenten):
     # Pas regex toe op het verzoekveld om deze schoon te maken
     # Verwijder newlines uit verzoekveld
     incidenten['Verzoek'] = incidenten['Verzoek']\
+            .str.replace(" :", ":", regex=True)
+    incidenten['Verzoek'] = incidenten['Verzoek']\
             .str.replace(r"\n", " ", regex=True)
     incidenten['Verzoek'] = incidenten['Verzoek']\
             .str.replace(r"\r", " ", regex=True)
@@ -100,9 +102,9 @@ def detecteer_regex(incidenten, oplossingen):
 
     # Begin bovenaan in de lijst met oplossingen.
     rest_regex= list()
-    rest_regex.append('^omschrijving\\ van\\ de\\ storing:(.+?)volledige\\ naam:.*')
-    rest_regex.append('^omschrijving\\ storing:(.+?)volledige\\ naam:.*')
-    rest_regex.append('^omschrijving\\ van\\ het\\ probleem:(.+?)volledige\\ dienst:.*')
+    rest_regex.append('omschrijving[\s\S]*storing:([\s\S]*)volledige[\s]*naam:[\s\S]*')
+    rest_regex.append('omschrijving[\s\S]*probleem:([\s\S]*)volledige[\s\S]*')
+    rest_regex.append('^([\s\S]*)volledige[\s\S]*naam:[\s\S]*')
     for verzoek_reg in rest_regex:
         incidenten['Omschrijving_verzoek_rest'] =\
                 incidenten.apply(lambda row: apply_regex_rest(row, verzoek_reg), axis=1)

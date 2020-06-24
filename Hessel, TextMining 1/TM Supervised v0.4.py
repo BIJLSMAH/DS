@@ -4,11 +4,24 @@ Created on Thu May 14 14:46:33 2020
 
 @author: Laptop
 """
-
+def ask_user(questionyn):
+    check = str(input(questionyn + " ? (y/n): ")).lower().strip()
+    try:
+        if check[0] == 'y':
+            return True
+        elif check[0] == 'n':
+            return False
+        else:
+            print('Verkeerde waarde ingevoerd !')
+            return ask_user()
+    except Exception as error:
+        print("Voer een correcte waarde in AUB !")
+        print(error)
+        return ask_user()
 
 from sklearn import model_selection, preprocessing, linear_model, naive_bayes, metrics, svm
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from sklearn import decomposition, ensemble
+from sklearn import ensemble
 import numpy as np
 import pandas as pd
 import xgboost, numpy
@@ -195,7 +208,6 @@ print ("2.5. Niet verder gebruikt")
 # for i, topic_dist in enumerate(topic_word):
 #    topic_words = numpy.array(vocab)[numpy.argsort(topic_dist)][:-(n_top_words+1):-1]
 #    topic_summaries.append(' '.join(topic_words))
-    
 #%% MODEL BUILDING
 # The final step in the text classification framework is to train a classifier 
 # using the features created in the previous step. There are many different 
@@ -313,23 +325,25 @@ accuracy = train_model(ensemble.RandomForestClassifier(), xtrain_tfidf_ngram_cha
 print("RF, CharLevel Vectors: %.10f" % accuracy)
 
 #%% Uitwerken model met de beste score
-import cPickle
+import _pickle as cPickle
 
 if ask_user('Herberekenen model'):
 
-    model=naive_bayes.MultinomialNB()
-    model.fit(xtrain_count,train_y)
+#   train_model(svm.SVC(), xtrain_tfidf_ngram_chars, train_y, xvalid_tfidf_ngram_chars)
+    model=svm.SVC()
+    model.fit(xtrain_tfidf_ngram_chars,train_y)
     # bewaren berekende optimale model
     with open(r'data/optimodel.pck', 'wb') as f:
         cPickle.dump(model, f)
 else:
     print('Model wordt geladen uit picklebestand  . . .')    
 
-with open(r'data/optimodel.pck', 'rb') as f:
+with open(r'data/optimodelSVM.pck', 'rb') as f:
     model=cPickle.load(f)
 
-predictions = model.predict(xvalid_count)
-xtest = pd.DataFrame(xvalid_count.copy().toarray())
+# predictions = model.predict_proba(xvalid_tfidf_ngram_chars)
+predictions = model.predict(xvalid_tfidf_ngram_chars)
+xtest = pd.DataFrame(xvalid_tfidf_ngram_chars.copy().toarray())
 xtest['actual'] = incencoder.inverse_transform(valid_y)
 xtest['prediction']=incencoder.inverse_transform(predictions)
 xtest['KOD'] = incvalid_x_original.reset_index().text
@@ -337,7 +351,7 @@ xtest['actual2'] = incvalid_y_original.reset_index().label
 
 xtest.to_csv(r'data/resultaat.csv')
 #%% 3.5. Boosting model
-# Implementing Xtereme Gradient Boosting Model
+# Implementing Xtreme Gradient Boosting Model
 # Boosting models are another type of ensemble models part of tree 
 # based models. Boosting is a machine learning ensemble meta-algorithm 
 # for primarily reducing bias, and also variance in supervised learning, 

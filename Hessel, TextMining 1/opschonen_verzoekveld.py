@@ -2,13 +2,14 @@ import os
 import re
 import numpy as np
 import pandas as pd
+from unidecode import unidecode
 
 def opschonen_incidenten(incidenten):
-    incidenten = incidenten[['Incidentnummer', 'Soort binnenkomst',
-        'Soort incident', 'Categorie', 'Verzoek']]
+    incidenten = incidenten[['Incidentnummer', 'Soort incident', 'Categorie', 'Verzoek']]
     incidenten = incidenten.query('`Soort incident` != "Event"')
     # Pas regex toe op het verzoekveld om deze schoon te maken
     # Verwijder newlines uit verzoekveld
+    
     incidenten['Verzoek'] = incidenten['Verzoek']\
             .str.replace(" :", ":", regex=True)
     incidenten['Verzoek'] = incidenten['Verzoek']\
@@ -38,16 +39,29 @@ def apply_regex(incident, regex_expr):
     return omschrijving
 
 def apply_regex_rest(incident, regex_expr):
-    if incident['Omschrijving_verzoek'] is not None:
-        omschrijving = None
-    elif incident['Omschrijving_verzoek_rest'] is not None:
-        omschrijving = incident['Omschrijving_verzoek_rest'].lower()
-    else:
-        # Detecteer de regex.
+    # Als zowel Omschrijving_verzoek en -rest leeg is, dan originele Verzoek
+    if (incident['Omschrijving_verzoek']) is None and (incident['Omschrijving_verzoek_rest']) is None:
+        # Bepaal het zoekresultaat uit het originele verzoek
         zoekresultaat = re.search(regex_expr, incident['Verzoek'].lower())
         # Als de regex gevonden is, geef dan de eerste capture group terug
-        omschrijving = zoekresultaat.group(1) if zoekresultaat\
-                is not None else incident['Verzoek'].lower()
+        # en anders het volledige zoekveld
+        omschrijving = zoekresultaat.group(1).strip() if zoekresultaat\
+                is not None else incident['Verzoek']
+    # Als rest gevuld, ga dan met rest aan de gang
+    elif (incident['Omschrijving_verzoek_rest']) is not None:
+        # Bepaal het zoekresultaat uit het originele verzoek
+        zoekresultaat = re.search(regex_expr, incident['Omschrijving_verzoek_rest'].lower())
+        # Als de regex gevonden is, geef dan de eerste capture group terug
+        # en anders het volledige zoekveld-rest
+        omschrijving = zoekresultaat.group(1).strip() if zoekresultaat\
+                is not None else incident['Omschrijving_verzoek_rest']
+    else:
+        # Bepaal het restveld uit het Omschrijving_verzoekveld       
+        zoekresultaat = re.search(regex_expr, incident['Omschrijving_verzoek'].lower())
+        # Als de regex gevonden is, geef dan de eerste capture group terug
+        # en anders het volledige zoekveld-rest
+        omschrijving = zoekresultaat.group(1).strip() if zoekresultaat\
+                is not None else incident['Omschrijving_verzoek']
     return omschrijving
 
 def construct_query(oplossing):
@@ -72,7 +86,6 @@ def detecteer_regex(incidenten, oplossingen):
 
     for opl_idx, oplossing in oplossingen_uniek.iterrows():
         query_string = construct_query(oplossing)
-        soortbinnenkomst = oplossing['Soort binnenkomst']
         soortincident = oplossing['Soort incident']
         categorie = oplossing['Categorie']
 
@@ -102,12 +115,14 @@ def detecteer_regex(incidenten, oplossingen):
 
     # Begin bovenaan in de lijst met oplossingen.
     rest_regex= list()
-    rest_regex.append('omschrijving[\s\S]*storing:([\s\S]*)volledige[\s]*naam:[\s\S]*')
-    rest_regex.append('omschrijving[\s\S]*probleem:([\s\S]*)volledige[\s\S]*')
+    rest_regex.append('[\s\S]*omschrijving[\s\S]*storing:([\s\S]*)volledige[\s]*naam:[\s\S]*')
+    rest_regex.append('[\s\S]*omschrijving[\s\S]*storing:([\s\S]*)telefoonnummer[\s\S]*cijferige\):[\s\S]*')
+    rest_regex.append('[\s\S]*omschrijving[\s\S]*probleem:([\s\S]*)volledige[\s\S]*')
     rest_regex.append('^([\s\S]*)volledige[\s\S]*naam:[\s\S]*')
+    rest_regex.append('[\s\S]*mailt:([\s\S]*)')
     for verzoek_reg in rest_regex:
         incidenten['Omschrijving_verzoek_rest'] =\
-                incidenten.apply(lambda row: apply_regex_rest(row, verzoek_reg), axis=1)
+                incidenten.apply(lambda row: apply_regex_rest(row, verzoek_reg), axis = 1 )
 
     return incidenten
 
@@ -118,13 +133,23 @@ mapTM = r'\Documents\Github\DS\Hessel, TextMining 1'
 hoofdmap = "%s%s%s" %(mapGebruikers, mapGebruiker, mapTM)
 os.chdir(hoofdmap)
 
-incidenten = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
+incidenten = pd.read_excel(r'data\Topdesk Incidenten Totaal Overzicht 2019-2020.xlsx')
 incidenten = opschonen_incidenten(incidenten)
 incidenten = verwijder_datum_naam(incidenten)
 
-oplossingen = pd.read_csv(r'data/Standaardoplossingen_processed_regex.csv', sep = ",", low_memory=False)
+oplossingen = pd.read_csv(r'data/Standaardoplossingen_processed_regex.csv', sep = ",", low_memory=False, encoding='UTF-8')
 
 incidenten = detecteer_regex(incidenten, oplossingen)
+clean_incidenten = list() 
+for d in incidenten['Omschrijving_verzoek_rest']:
+    words = d.split()
+    sentence = ""
+    for w in words:
+        w = unidecode(w)
+        sentence = sentence + ' ' + str(w)
+    clean_incidenten.append(sentence)
+incidenten['Omschrijving_verzoek_rest'] = clean_incidenten
+
 print(incidenten['Omschrijving_verzoek'].apply(lambda x: True if x is not None else False).sum())
 print(incidenten['Omschrijving_verzoek_rest'].apply(lambda x: True if x is not None else False).sum())
 

@@ -10,7 +10,7 @@ def opschonen_oplossingen(oplossingen):
     # Houdt alleen de kolommen 'Binnenkomst', 'Soort incident', 'Categorie'
     # en 'Verzoek'
     print("Selecteer kolommen")
-    keep_columns = ['Soort binnenkomst', 'Soort incident', 'Categorie', 'Verzoek'] \
+    keep_columns = ['Soort incident', 'Categorie', 'Verzoek'] \
             + [x for x in oplossingen.columns.values if 'Unnamed:' in x]
     oplossingen = oplossingen[keep_columns]
 

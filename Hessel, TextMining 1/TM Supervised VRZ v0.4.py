@@ -42,21 +42,25 @@ hoofdmap = "%s%s%s" %(mapGebruikers, mapGebruiker, mapTM)
 os.chdir(hoofdmap)
 
 # load the dataset incidenten
-data = pd.read_csv(r'data\Topdesk Incidenten Totaal Overzicht 2019-2020.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
-#   data = data[['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Verzoek', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
-data = data[['Incident nummer', 'Datum aangemeld', 'Korte omschrijving', 'Impact', 'Soort incident', 'Categorie', 'Subcategorie', 'Object']]
+data = pd.read_excel(r'data\Topdesk Incidenten Totaal Overzicht 2019-2020.xlsx')
+# data = pd.read_csv(r'data\Topdesk Incidenten Totaal Overzicht 2019-2020.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
+# data = data[['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Verzoek', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
+data = data[['Incidentnummer', 'Datum aangemeld', 'verzoek_clean', 'Impact', 'Soort incident', 'Categorie', 'Subcategorie', 'Object']]
 #   De volgende stap is nodig om de wijzigende kolomnamen te converteren voor een
 #   eenduidige naamgeving in het rest van het script.
-data.columns = ['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Impact', 'Soort incident','Categorie', 'Subcategorie', 'Object ID']
+data.columns = ['Incidentnummer', 'Aanmelddatum', 'verzoek_clean', 'Impact', 'Soort incident','Categorie', 'Subcategorie', 'Object ID']
 
 # data = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
-df = data[['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Soort incident', 'Categorie', 'Object ID']]
+df = data[['Incidentnummer', 'Aanmelddatum', 'verzoek_clean', 'Soort incident', 'Categorie', 'Object ID']]
 # Filter de events eruit
 df=df.loc[data.index[data['Soort incident']!="Event"]]
 # replacing na values in OBJECT ID with Onbekend 
 df['Object ID'].fillna("Onbekend", inplace = True) 
-df['Aanmelddatum'] = df['Aanmelddatum'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S').date())
+df['Aanmelddatum'] = df['Aanmelddatum'].apply(lambda x: x.date())
+df = df.dropna(subset=['verzoek_clean'])
 
+# Er zijn verzoekvelden zonder omschrijving. Deze gaan we eerst verwijderen.
+# Voor 179967, na 179178
 
 # Vanwege performance overwegingen, werken met een steekproef (sample),
 
@@ -87,14 +91,10 @@ for stopword in x:
     if stopword not in my_stopwords:
         my_stopwords.append(stopword)
 
-df['KOD'] = df['Korte omschrijving Details'].str.lower().str.split()
-df['KOD'] = df['KOD'].apply(lambda x: [item for item in x if item not in my_stopwords])
-df['KOD'] = df['KOD'].apply(lambda x: [item for item in x if len(item)>2])
-df['KOD'] = df['KOD'].apply(lambda x: ' '.join(map(str,x)))
-
-inctrainDF = pd.DataFrame()
-inctrainDF['label'] = dftrain['Object ID']
-inctrainDF['text'] = dftrain['KOD']
+df['VRZ'] = df['verzoek_clean'].str.lower().str.split()
+df['VRZ'] = df['VRZ'].apply(lambda x: [item for item in x if item not in my_stopwords])
+df['VRZ'] = df['VRZ'].apply(lambda x: [item for item in x if len(item)>2])
+df['VRZ'] = df['VRZ'].apply(lambda x: ' '.join(map(str,x)))
 
 #%% OPDELEN IN TRAIN EN TEST
 # split the dataset into training and validation datasets 
@@ -113,11 +113,11 @@ if (manier=='1'):
     
     inctrainDF = pd.DataFrame()
     inctrainDF['label'] = dftrain['Object ID']
-    inctrainDF['text'] = dftrain['KOD']
+    inctrainDF['text'] = dftrain['VRZ']
     
     inctestDF = pd.DataFrame()
     inctestDF['label'] = dftest['Object ID']
-    inctestDF['text'] = dftest['KOD']
+    inctestDF['text'] = dftest['VRZ']
     
     inctrain_x_original = inctrainDF['text']
     inctrain_y_original = inctrainDF['label']
@@ -303,7 +303,7 @@ def train_model(classifier, feature_vector_train, label, feature_vector_valid, i
 # in a class is unrelated to the presence of any other feature.
 
 # Naive Bayes on Count Vectors
-f = open(r'data/SL_KOD_NB.txt', 'w')
+f = open(r'data/SL_VRZ_NB.txt', 'w')
 
 accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_count, train_y, xvalid_count)
 print ("NB, Count Vectors: %.10f" % accuracy)
@@ -335,7 +335,7 @@ f.close()
 # dependent variable and one or more independent variables by estimating 
 # probabilities using a logistic/sigmoid function. 
 
-f = open(r'data/SL_KOD_LR.txt', 'w')
+f = open(r'data/SL_VRZ_LR.txt', 'w')
 # Linear Classifier on Count Vectors
 accuracy = train_model(linear_model.LogisticRegression(max_iter=4000), xtrain_count, train_y, xvalid_count)
 print ("LR, Count Vectors: %.10f" % accuracy)
@@ -362,7 +362,7 @@ f.close()
 
 #%% 3.3. SVM 
 
-f = open(r'data/SL_KOD_SVM.txt', 'w')
+f = open(r'data/SL_VRZ_SVM.txt', 'w')
 
 # SVM on Ngram Level Count Vectors
 accuracy = train_model(svm.SVC(), xtrain_count, train_y, xvalid_count)
@@ -391,7 +391,7 @@ f.write ("SVM, CharLevel Vectors: %.10f" % accuracy)
 f.close()
 #%% 3.4 RF on Word Level TF IDF Vectors
 
-f = open(r'data/SL_KOD_RF.txt', 'w')
+f = open(r'data/SL_VRZ_RF.txt', 'w')
 # RF on Count Vectors
 accuracy = train_model(ensemble.RandomForestClassifier(), xtrain_count, train_y, xvalid_count)
 print("RF, Count Vectors: %.10f" % accuracy)
@@ -422,12 +422,12 @@ if ask_user('Herberekenen model'):
     model=svm.SVC()
     model.fit(xtrain_tfidf_ngram_chars,train_y)
     # bewaren berekende optimale model
-    with open(r'data/optimodel.pck', 'wb') as f:
+    with open(r'data/optimodel_SVM_SL_VRZ.pck', 'wb') as f:
         cPickle.dump(model, f)
 else:
     print('Model wordt geladen uit picklebestand  . . .')    
 
-with open(r'data/optimodel.pck', 'rb') as f:
+with open(r'data/optimodel_SVM_SL_VRZ.pck', 'rb') as f:
     model=cPickle.load(f)
 
 # predictions = model.predict_proba(xvalid_tfidf_ngram_chars)
@@ -435,10 +435,10 @@ predictions = model.predict(xvalid_tfidf_ngram_chars)
 xtest = pd.DataFrame(xvalid_tfidf_ngram_chars.copy().toarray())
 xtest['actual'] = incencoder.inverse_transform(valid_y)
 xtest['prediction']=incencoder.inverse_transform(predictions)
-xtest['KOD'] = incvalid_x_original.reset_index().text
+xtest['VRZ'] = incvalid_x_original.reset_index().text
 xtest['actual2'] = incvalid_y_original.reset_index().label
 
-xtest.to_csv(r'data/resultaat.csv')
+xtest.to_csv(r'data/resultaat_SVM_SL_VRZ.csv')
 #%% 3.5. Boosting model
 # Implementing Xtreme Gradient Boosting Model
 # Boosting models are another type of ensemble models part of tree 

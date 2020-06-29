@@ -38,10 +38,15 @@ if ask_user('Wilt u dataset laden'):
     hoofdmap = "%s%s%s" %(mapGebruikers, mapGebruiker, mapTM)
     os.chdir(hoofdmap)
 
-    data = pd.read_excel(r'data\Incidenten_SD_2018_2019_totaal.xlsm')
-    data = data[['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'verzoek_clean', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
+    data = pd.read_excel(r'data\Topdesk Incidenten Totaal Overzicht 2019-2020.xlsx')
+#   data = data[['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'verzoek_clean', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
+    data = data[['Incidentnummer', 'Datum aangemeld', 'verzoek_clean', 'Impact', 'Soort incident', 'Categorie', 'Subcategorie', 'Object']]
+#   De volgende stap is nodig om de wijzigende kolomnamen te converteren voor een
+#   eenduidige naamgeving in het rest van het script.
 
-    # Filter de events eruit
+    data.columns = ['Incidentnummer', 'Aanmelddatum', 'verzoek_clean', 'Impact', 'Soort incident','Categorie', 'Subcategorie', 'Object ID']
+ 
+#   Filter de events eruit
     data=data.loc[data.index[data['Soort incident']!="Event"]]
 
     # Bepaal de frequenties per gevonden Object ID in de top 50
@@ -119,7 +124,7 @@ if ask_user('Bepalen optimaal # clusters met elbow'):
 
     model = KMeans()
     visualizer = KElbowVisualizer(
-        model, k=range(2, 51, 4), metric='calinski_harabasz', timings=False)
+        model, k=range(2, 51, 1), metric='calinski_harabasz', timings=False)
 
     visualizer.fit(Xdf)        # Fit the data to the visualizer
     visualizer.show()          # Finalize and render the figure
@@ -132,7 +137,7 @@ else:
 if ask_user('Toevoegen clusters aan data'):
     print('Clustergegevens worden aan de dataset toegevoegd!')
     sse = {}
-    k = 10
+    k = 14
     kmeans = KMeans(n_clusters=k, max_iter=50).fit(Xdf)
     data['clusters'] = kmeans.labels_
     sse[k] = kmeans.inertia_ # Inertia: Sum of distances of samples to their closest cluster center

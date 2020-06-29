@@ -92,10 +92,6 @@ df['KOD'] = df['KOD'].apply(lambda x: [item for item in x if item not in my_stop
 df['KOD'] = df['KOD'].apply(lambda x: [item for item in x if len(item)>2])
 df['KOD'] = df['KOD'].apply(lambda x: ' '.join(map(str,x)))
 
-inctrainDF = pd.DataFrame()
-inctrainDF['label'] = dftrain['Object ID']
-inctrainDF['text'] = dftrain['KOD']
-
 #%% OPDELEN IN TRAIN EN TEST
 # split the dataset into training and validation datasets 
 print("Split dataset in train- en testset . . .")
@@ -422,12 +418,12 @@ if ask_user('Herberekenen model'):
     model=svm.SVC()
     model.fit(xtrain_tfidf_ngram_chars,train_y)
     # bewaren berekende optimale model
-    with open(r'data/optimodel.pck', 'wb') as f:
+    with open(r'data/optimodel_SVM_SL_KOD.pck', 'wb') as f:
         cPickle.dump(model, f)
 else:
     print('Model wordt geladen uit picklebestand  . . .')    
 
-with open(r'data/optimodel.pck', 'rb') as f:
+with open(r'data/optimodel_SVM_SL_KOD.pck', 'rb') as f:
     model=cPickle.load(f)
 
 # predictions = model.predict_proba(xvalid_tfidf_ngram_chars)
@@ -438,7 +434,7 @@ xtest['prediction']=incencoder.inverse_transform(predictions)
 xtest['KOD'] = incvalid_x_original.reset_index().text
 xtest['actual2'] = incvalid_y_original.reset_index().label
 
-xtest.to_csv(r'data/resultaat.csv')
+xtest.to_csv(r'data/resultaat_SVM_SL_KOD.csv')
 #%% 3.5. Boosting model
 # Implementing Xtreme Gradient Boosting Model
 # Boosting models are another type of ensemble models part of tree 

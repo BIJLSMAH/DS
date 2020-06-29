@@ -41,7 +41,7 @@ if ask_user('Wilt u dataset laden'):
 #    data = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
     data = pd.read_csv(r'data\Topdesk Incidenten Totaal Overzicht 2019-2020.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
 #   data = data[['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Verzoek', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
-    data = data[['Incident nummer', 'Datum aangemeld', 'Korte omschrijving', 'Impact', 'Soort incident', 'Categorie', 'Subcategorie', 'Object']]
+    data = data[['Incidentnummer', 'Datum aangemeld', 'Korte omschrijving', 'Impact', 'Soort incident', 'Categorie', 'Subcategorie', 'Object']]
 #   De volgende stap is nodig om de wijzigende kolomnamen te converteren voor een
 #   eenduidige naamgeving in het rest van het script.
 

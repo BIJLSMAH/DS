@@ -44,17 +44,17 @@ os.chdir(hoofdmap)
 # load the dataset incidenten
 data = pd.read_csv(r'data\Topdesk Incidenten Totaal Overzicht 2019-2020.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
 #   data = data[['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Verzoek', 'Soort binnenkomst', 'Soort incident', 'Categorie', 'Object ID']]
-data = data[['Incident nummer', 'Datum aangemeld', 'Korte omschrijving', 'Impact', 'Soort incident', 'Categorie', 'Subcategorie', 'Object']]
+data = data[['Incident nummer', 'Datum aangemeld', 'Korte omschrijving', 'Impact', 'Soort incident', 'Categorie', 'Subcategorie', 'Behandelaarsgroep']]
 #   De volgende stap is nodig om de wijzigende kolomnamen te converteren voor een
 #   eenduidige naamgeving in het rest van het script.
-data.columns = ['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Impact', 'Soort incident','Categorie', 'Subcategorie', 'Object ID']
+data.columns = ['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Impact', 'Soort incident','Categorie', 'Subcategorie', 'Behandelaarsgroep']
 
 # data = pd.read_csv(r'data\Incidenten_SD_2018_2019_totaal-v3.csv', header=0, parse_dates=False, squeeze=True, low_memory=False)
-df = data[['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Soort incident', 'Categorie', 'Object ID']]
+df = data[['Incidentnummer', 'Aanmelddatum', 'Korte omschrijving Details', 'Soort incident', 'Categorie', 'Behandelaarsgroep']]
 # Filter de events eruit
 df=df.loc[data.index[data['Soort incident']!="Event"]]
 # replacing na values in OBJECT ID with Onbekend 
-df['Object ID'].fillna("Onbekend", inplace = True) 
+df['Behandelaarsgroep'].fillna("Onbekend", inplace = True) 
 df['Aanmelddatum'] = df['Aanmelddatum'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S').date())
 
 
@@ -64,9 +64,9 @@ df['Aanmelddatum'] = df['Aanmelddatum'].apply(lambda x: datetime.strptime(x, '%Y
 # Er zijn objectid waar heel weinig incidenten betrekking op hebben. Deze 
 # vervuilen de analyse. Daarom worden deze in onderstaande code gefilterd.
 
-df2 = df.groupby('Object ID').count()
+df2 = df.groupby('Behandelaarsgroep').count()
 df2 = df2.nlargest(50, 'Incidentnummer')
-df = df[df['Object ID'].isin(df2.index)]
+df = df[df['Behandelaarsgroep'].isin(df2.index)]
 
 steekproefgrootte = 500000
 chosen_idx = np.random.choice(len(df), replace=False, size=((len(df)>steekproefgrootte)*steekproefgrootte)+((len(df)<=steekproefgrootte)*len(df)))
@@ -108,11 +108,11 @@ if (manier=='1'):
     dftest = df[(df['Aanmelddatum'].astype(str) >= datestr)]
     
     inctrainDF = pd.DataFrame()
-    inctrainDF['label'] = dftrain['Object ID']
+    inctrainDF['label'] = dftrain['Behandelaarsgroep']
     inctrainDF['text'] = dftrain['KOD']
     
     inctestDF = pd.DataFrame()
-    inctestDF['label'] = dftest['Object ID']
+    inctestDF['label'] = dftest['Behandelaarsgroep']
     inctestDF['text'] = dftest['KOD']
     
     inctrain_x_original = inctrainDF['text']
@@ -299,7 +299,7 @@ def train_model(classifier, feature_vector_train, label, feature_vector_valid, i
 # in a class is unrelated to the presence of any other feature.
 
 # Naive Bayes on Count Vectors
-f = open(r'data/SL_KOD_NB.txt', 'w')
+f = open(r'data/SL_KOD_BHG_NB.txt', 'w')
 
 accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_count, train_y, xvalid_count)
 print ("NB, Count Vectors: %.10f" % accuracy)
@@ -331,7 +331,7 @@ f.close()
 # dependent variable and one or more independent variables by estimating 
 # probabilities using a logistic/sigmoid function. 
 
-f = open(r'data/SL_KOD_LR.txt', 'w')
+f = open(r'data/SL_KOD_BHG_LR.txt', 'w')
 # Linear Classifier on Count Vectors
 accuracy = train_model(linear_model.LogisticRegression(max_iter=4000), xtrain_count, train_y, xvalid_count)
 print ("LR, Count Vectors: %.10f" % accuracy)
@@ -358,7 +358,7 @@ f.close()
 
 #%% 3.3. SVM 
 
-f = open(r'data/SL_KOD_SVM.txt', 'w')
+f = open(r'data/SL_KOD_BHG_SVM.txt', 'w')
 
 # SVM on Ngram Level Count Vectors
 accuracy = train_model(svm.SVC(), xtrain_count, train_y, xvalid_count)
@@ -387,7 +387,7 @@ f.write ("SVM, CharLevel Vectors: %.10f" % accuracy)
 f.close()
 #%% 3.4 RF on Word Level TF IDF Vectors
 
-f = open(r'data/SL_KOD_RF.txt', 'w')
+f = open(r'data/SL_KOD_BHG_RF.txt', 'w')
 # RF on Count Vectors
 accuracy = train_model(ensemble.RandomForestClassifier(), xtrain_count, train_y, xvalid_count)
 print("RF, Count Vectors: %.10f" % accuracy)
@@ -415,33 +415,26 @@ import _pickle as cPickle
 if ask_user('Herberekenen model'):
 
 #   train_model(svm.SVC(), xtrain_tfidf_ngram_chars, train_y, xvalid_tfidf_ngram_chars)
-    model=svm.SVC(probability=True)
-    model.fit(xtrain_tfidf_ngram_chars,train_y, )
+    model=svm.SVC()
+    model.fit(xtrain_tfidf_ngram_chars,train_y)
     # bewaren berekende optimale model
-    with open(r'data/optimodel_SVM_SL_KOD.pck', 'wb') as f:
+    with open(r'data/optimodel_SVM_SL_KOD_BHG.pck', 'wb') as f:
         cPickle.dump(model, f)
 else:
     print('Model wordt geladen uit picklebestand  . . .')    
 
-with open(r'data/optimodel_SVM_SL_KOD.pck', 'rb') as f:
+with open(r'data/optimodel_SVM_SL_KOD_BHG.pck', 'rb') as f:
     model=cPickle.load(f)
 
-predictions_proba = model.predict_proba(xvalid_tfidf_ngram_chars)
+# predictions = model.predict_proba(xvalid_tfidf_ngram_chars)
 predictions = model.predict(xvalid_tfidf_ngram_chars)
 xtest = pd.DataFrame(xvalid_tfidf_ngram_chars.copy().toarray())
 xtest['actual'] = incencoder.inverse_transform(valid_y)
-xtest['uprediction'] = predictions
 xtest['prediction']=incencoder.inverse_transform(predictions)
 xtest['KOD'] = incvalid_x_original.reset_index().text
 xtest['actual2'] = incvalid_y_original.reset_index().label
 
-with open(r'data/predictions_proba.pck', 'wb') as f:
-    cPickle.dump(predictions_proba, f)
-
-xtest = xtest[['actual', 'uprediction','prediction', 'KOD', 'actual2']]
-xtest.to_csv(r'data/xtest.csv')
-predf = pd.DataFrame(predictions_proba)
-predf.to_csv(r'data/predictions_proba.csv')
+xtest.to_csv(r'data/resultaat_SVM_SL_KOD_BHG.csv')
 #%% 3.5. Boosting model
 # Implementing Xtreme Gradient Boosting Model
 # Boosting models are another type of ensemble models part of tree 

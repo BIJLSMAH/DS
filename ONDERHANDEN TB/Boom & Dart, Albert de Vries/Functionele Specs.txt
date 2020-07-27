@@ -1,0 +1,55 @@
+Goedemiddag Hessel,
+
+
+Naar aanleiding van ons telefoongesprek het volgende:
+Graag willen wij twee bestanden samenvoegen.
+
+
+Bijgevoegd vind je drie bestanden.
+De cultivars die wel in het bestand “Bomenlijst namen” voorkomen en niet in het bestand “Catalogus 2017 bomen” willen wij graag toevoegen aan dat bestand.
+Daarbij willen wij dan van de duurste cultivar (1e, 2e en 3e naam) die van deze soort (1e en 2e naam) wel in het bestand catalogus 2017 bomen voorkomt de maten met bijbehorende prijzen overnemen.
+
+In het nieuwe bestand “Catalogus 2017 bomen met uitbreiding” heb ik een voorbeeld gemaakt:
+
+Bij Acer campestre.
+Cultivar Any Globes komt niet voor, deze toegevoegd en alle maten en prijzen toegevoegd van Acer campestre Royal Ruby, want van Acer campestre “x” is Royal Ruby de duurste variant.
+De ingevoegde regels graag de naam groen kleuren zoals in voorbeeld.
+Daarnaast willen wij achter Any Globes graag een controle kolom hebben om zo handmatig snel te kunnen controleren waar de prijs vandaan komt.
+
+
+Kan je aangeven hoeveel tijd hieraan kwijt bent en hoeveel dit ons kost?
+
+Met vriendelijke groet / Mit freundlichen Grüßen / Best regards,
+
+Albert de Vries
+
+Adjunct-Directeur / Stellvertretender Geschäftsführer / Deputy Director
+
+ 
+
+T. +31 172 235 235
+
+M. +31 6 13 13 31 84
+
+E. adevries@bootendart.nl 
+
+
+Cultivar, definitie
+Een cultivar is een plant of een plantengroep die geselecteerd is op wenselijke eigenschappen waarvan het behoud mogelijk is door teelt of andere vormen van vermeerdering.
+
+
+
+Te realiseren functionaliteit
+Stap 1. Selectie bestand Bomenlijst namen
+Stap 2. Controle op juiste vorm en inhoud voor verwerking
+Stap 3. Definieren Klasse BomenlijstNamen inclusief rijaanduiding in lijst
+Stap 4. Definieren Klasse CatalogusBomen inclusief rijaanduiding in lijst
+Stap 5. Definieren Klasse DuurstePerSoort (1e en 2e naam) inclusief prijs uit CatalogusBomen ook alle maten van de betreffende duurste variant overnemen.
+		Gebruik hiervoor het rijbereik (cijfers) leg ook de groepnaam vast en de oorspronkelijk variant van de groep.
+		Als van de betreffende variant nog geen soort aanwezig is, dan wordt de regel overgenomen, maar met maatcode onbekend en prijs onbekend.
+Stap 3. Inlezen Bomenlijst Namen in Collectie van 
+Stap 4. Inlezen Catalogus Bomen in Collectie
+Stap 5. Doorloop Bomenlijst 
+Stap 5a. Als BomenlijstNaam in Catalogus bestaat, dan ga naar de volgende.
+Stap 5b. Als BomenlijstNaam niet in Catalogus bestaat, voeg deze dan onderaan de lijst toe. 
+Stap 5c. Maak bij het toevoegen van de bomenlijstnamen onderaan gebruik van de klasse duurste per soort.

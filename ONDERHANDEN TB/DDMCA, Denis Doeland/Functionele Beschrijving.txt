@@ -1,0 +1,13 @@
+Ha goedemiddag Hessel,
+
+Goed weekend gehad? Nogmaals dank voor de hulp bij DJ Publishing.
+
+Inmiddels heb ik weer een nieuwe klus voor je.
+
+Van de aangehechte Excel moet van alle tabbladen een masterlijst komen. 
+In elke lijst op een tabblad staat een kolom met een emailadres. Dat is de unieke identifier. 
+De kolommen in elk tabblad moeten allemaal horizontaal worden toegevoegd. 
+Als dezelfde emailadressen voorkomen betekent dat dus dat in de masterlijst 1 emailadres voorkomt maar de verschillende kolommen uit de tabladen toegevoegd. 
+Graag zou ik zien dat de kolom naats het emailadres in de masterlijst aangeeft uit welke bron (lees tabblad) de informatie komt die bij het emailadres hoort.
+
+Zou je me kunnen laten weten wanneer je de masterlijst kan aanleveren? 

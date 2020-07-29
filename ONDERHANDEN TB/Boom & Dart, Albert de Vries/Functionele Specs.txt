@@ -15,23 +15,33 @@ Bij Acer campestre.
 Cultivar Any Globes komt niet voor, deze toegevoegd en alle maten en prijzen toegevoegd van Acer campestre Royal Ruby, want van Acer campestre “x” is Royal Ruby de duurste variant.
 De ingevoegde regels graag de naam groen kleuren zoals in voorbeeld.
 Daarnaast willen wij achter Any Globes graag een controle kolom hebben om zo handmatig snel te kunnen controleren waar de prijs vandaan komt.
+_______________________
 
+Ik zou nog terugkomen op het verhaal m.b.t. de Malus. Of ook wel de uitzonderingen:
+De plant met twee namen, waarvan de tweede naam tussen aanhalingstekens staat (‘x’) wordt de prijs als “onbekend” geprojecteerd. Deze passen wij laten handmatig aan.
+Graag deze regels een afwijkende kleur geven.
+Voor deze planten (m.b.t. schrijfwijze) graag de volgende maten toevoegen:
+14- 16 draadkluit hoogstam
+14- 16 wortelgoed hoogstam
+16- 18 draadkluit hoogstam
+16- 18 wortelgoed hoogstam
+18- 20 draadkluit hoogstam
+18- 20 wortelgoed hoogstam
+	
+Voor het overige geldt het volgende, zoals gisteren ook telefonisch besproken:
+Zoeken in de maat 16-18 draadkluit hoogstam en dan van de hele cultivar alle maten kopiëren en projecteren bij de nieuw in te voegen cultivar.
+Als 16-18 draadkluit hoogstam als maat niet bestaat, dan zoeken in 14-16 draadkluit hoogstam.
 
-Kan je aangeven hoeveel tijd hieraan kwijt bent en hoeveel dit ons kost?
+Mocht deze ook niet bestaan dan prijs aanduiden met “onbekend”.
 
-Met vriendelijke groet / Mit freundlichen Grüßen / Best regards,
+Uitgangspunten
+_______________________
 
-Albert de Vries
+Als binnen een groep niet alle cultivars, maar slechts één of twee in de groep de maat 16-18 draadkluit hoogstam heeft betekent dit dat alleen deze betrokken word(t)en bij het bepalen van de hoogste prijs en de rest niet. 
 
-Adjunct-Directeur / Stellvertretender Geschäftsführer / Deputy Director
-
- 
-
-T. +31 172 235 235
-
-M. +31 6 13 13 31 84
-
-E. adevries@bootendart.nl 
+Er wordt nu gecontroleerd bij het bepalen van de duurste cultivar in de groep van maat 16-18 DHO. Als er meerdere cultivars in de groep voorkomen met dezelfde prijs, dan wordt uitgegaan van de eerste. Er wordt 
+op dat moment niet gekeken vergeleken op andere prijsverschillen van andere maatkodes.
+________________________
 
 
 Cultivar, definitie

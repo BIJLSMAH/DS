@@ -41,6 +41,25 @@ Als binnen een groep niet alle cultivars, maar slechts één of twee in de groep
 
 Er wordt nu gecontroleerd bij het bepalen van de duurste cultivar in de groep van maat 16-18 DHO. Als er meerdere cultivars in de groep voorkomen met dezelfde prijs, dan wordt uitgegaan van de eerste. Er wordt 
 op dat moment niet gekeken vergeleken op andere prijsverschillen van andere maatkodes.
+
+Er is een voorwaardelijke opmaak gedefinieerd voor kolom D in de Catalogus. Als er in dezelfde regel in de kolom Opmerkingen iets zal zijn of worden ingevuld, zal de waarde kolom D groen worden gekleurd.
+De cel zal omkaderd zijn.
+
+Voor het toevoegen wordt het filter die eventueel op de cataloguslijst staat gewist, zodat alle regels worden getoond. Dit om eventueel ongewenste lege regels te voorkomen.
+Uiteindelijk wordt na het toevoegen van de nieuwe namen uit de bomenlijst, de catalogus gesorteerd op groepnaam, binnen de groep op latijnse naam en binnen latijnse naam op maatkode omschrijving.
+
+Werkwijze.
+1. Doorloop de bomenlijst.
+2. 		Bekijk per regel in de bomenlijst de samenstelling van de latijnse naam. Bekijk vooral de eerste twee woorden van de bomenlijst.
+3a.			Kijk of het tweede woord begint met een enkele quote "'". Er wordt alleen gecontroleerd op beginnende quote omdat er in de string soms spaties voorkomen Bijvoorbeeld Malus 'Donald Wyman'
+			Als dit het geval is, voeg de cultivar toe en maak hieronder standaard maatkodes waarbij de prijs "onbekend"
+3b.			Als van de latijnse naam het tweede woord niet begint met een enkele quote "'" of de latijnse naam bevat drie of meer woorden. 
+			Als dit het geval is, bepaal dan op basis van de eerste twee woorden de groepnaam waarvan maat 16-18 cm. met draadkluit hoogstam de hoogste prijs laat zien.
+				Als er op basis van de eerste en tweede naam geen groepnaam uit de catalogus kan worden bepaald, voeg de cultivar (latijnse naam) dan aan de catalogus toe met de standaard maatkodes en prijs onbekend.
+				Als er meerdere cultivars zijn die onder dezelfde groep onder maat 16-18 cm. met draadkluit hoogstam dezelfde hoogste prijs hebben wordt er maar één als duurste aangewezen. Niet gekeken naar andere maten.
+				Als er onder de groepnaam (eerste en tweede naam) geen enkele maatkode 16-18 cm. met draadkluit hoogstam voorkomt, kijk dan naar de maatkode 14-16 cm. met draadkluit hoogstam.
+				Als er onder de groepnaam (eerste en tweede naam) geen enkele maatkode 16-18 cm. met draadkluit hoogstam en geen enkele 14-16 cm. met draadkluit hoogstam, voeg cultivar toe met standaard maatkodes en prijs onbekend.
+				
 ________________________
 
 

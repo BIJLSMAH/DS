@@ -50,7 +50,7 @@ Uiteindelijk wordt na het toevoegen van de nieuwe namen uit de bomenlijst, de ca
 
 Werkwijze.
 1. Doorloop de bomenlijst.
-2. 		Bekijk per regel in de bomenlijst de samenstelling van de latijnse naam. Bekijk vooral de eerste twee woorden van de bomenlijst.
+2. 		Bekijk per regel in de bomenlijst de samenstelling van de latijnse naam. Bekijk de eerste twee woorden van de bomenlijst.
 3a.			Kijk of het tweede woord begint met een enkele quote "'". Er wordt alleen gecontroleerd op beginnende quote omdat er in de string soms spaties voorkomen Bijvoorbeeld Malus 'Donald Wyman'
 			Als dit het geval is, voeg de cultivar toe en maak hieronder standaard maatkodes waarbij de prijs "onbekend"
 3b.			Als van de latijnse naam het tweede woord niet begint met een enkele quote "'" of de latijnse naam bevat drie of meer woorden. 
@@ -60,7 +60,12 @@ Werkwijze.
 				Als er onder de groepnaam (eerste en tweede naam) geen enkele maatkode 16-18 cm. met draadkluit hoogstam voorkomt, kijk dan naar de maatkode 14-16 cm. met draadkluit hoogstam.
 				Als er onder de groepnaam (eerste en tweede naam) geen enkele maatkode 16-18 cm. met draadkluit hoogstam en geen enkele 14-16 cm. met draadkluit hoogstam, voeg cultivar toe met standaard maatkodes en prijs onbekend.
 				
+N.B. Er wordt alleen gekeken naar de latijnse naam. Als in de bomenlijst een cultivar staat die wel als laanboom is opgenomen wordt deze niet onder fruit en vruchtbomen nog een keer aangemaakt. Een cultivar kan dus maar tot
+één groep behoren. VB Crataegus lavalleei wordt aangeleverd in de bomenlijst als Fruit en Vruchtboom, maar staat in de catalogus al onder laanboom. Deze cultivar wordt nu niet nog eens aan de catalogus toegevoegd. 
+ 
+
 ________________________
+
 
 
 Cultivar, definitie

@@ -54,7 +54,7 @@ Werkwijze.
 3a.			Kijk of het tweede woord begint met een enkele quote "'". Er wordt alleen gecontroleerd op beginnende quote omdat er in de string soms spaties voorkomen Bijvoorbeeld Malus 'Donald Wyman'
 			Als dit het geval is, voeg de cultivar toe en maak hieronder standaard maatkodes waarbij de prijs "onbekend"
 3b.			Als van de latijnse naam het tweede woord niet begint met een enkele quote "'" of de latijnse naam bevat drie of meer woorden. 
-			Als dit het geval is, bepaal dan op basis van de eerste twee woorden de groepnaam waarvan maat 16-18 cm. met draadkluit hoogstam de hoogste prijs laat zien.
+			Als dit het geval is, bepaal dan op basis van de eerste twee woorden de groepnaam waarvan maat 16-18 cm. met draadkluit hoogstam resp. 14-16 cm. draadkluit hoogstam de hoogste prijs laat zien.
 				Als er op basis van de eerste en tweede naam geen groepnaam uit de catalogus kan worden bepaald, voeg de cultivar (latijnse naam) dan aan de catalogus toe met de standaard maatkodes en prijs onbekend.
 				Als er meerdere cultivars zijn die onder dezelfde groep onder maat 16-18 cm. met draadkluit hoogstam dezelfde hoogste prijs hebben wordt er maar één als duurste aangewezen. Niet gekeken naar andere maten.
 				Als er onder de groepnaam (eerste en tweede naam) geen enkele maatkode 16-18 cm. met draadkluit hoogstam voorkomt, kijk dan naar de maatkode 14-16 cm. met draadkluit hoogstam.

@@ -1,0 +1,8 @@
+Naast de export verlof hebben we een export TVT nodig. 
+In principe hetzelfde als export verlof maar er zijn wat verschillen.
+
+1. Het saldo TVT per medewerker komt uit de optelling kolom S+ kolom T + kolom U.
+2. Het gaat hier niet alleen om opname (Factor -1) zoals bij verlof maar ook over toename (Factor+1). Alle saldo's worden als positieve waarde verwerkt met deze factor.
+3. Om dit te kunnen realiseren moet het verschil van 2 overzichten van elkaar worden afgetrokken (Verl_Wk_01-Y) minus (Verl_Wk_01-X)= saldo 
+4. Bovenstaand saldo moet worden gebruikt om klaargezette bestanden te verrijken. 
+5. Het component soort verlof is 15 het component soort tvt is 10

@@ -1,0 +1,48 @@
+Goedemiddag Hessel,
+
+Alles goed in het hoge noorden hopen wij?
+
+We hebben een bug in het beschikbare premie programma ontdekt. Eigenlijk had ik die al eerder gezien maar was me ontschoten omdat deze situatie niet zo vaak voorkomt.
+De fout zit in de optelling van de premie van het Tijdelijk Partnerpensioen (TPP) wanneer deze ten laste van de deelnemer komt.
+Het TPP kan door de werkgever worden betaald, dan gaat de optelling goed, maar dus ook door de deelnemer.
+Dan gaat het fout. De premie wordt dan niet bijgeteld bij de eigen bijdrage van de deelnemer.
+
+In de bijlagen tref je het overzicht per 1-10-20 wat we in het oude systeem (Benjamin) hebben gemaakt.
+Dat gaat goed.
+
+Als voorbeeld kun je de eerste deelnemer nemen, D. van der Vlist, die heeft een partner en een TPP premie staan ten laste van DN van 224,56 per jaar.
+De maandpremie van 18,71 is bovenop zijn maandelijkse eigen bijdrage opgeteld waardoor zijn bijdrage 153,65 bedraagt.
+
+In het tweede overzicht, in het Hessel systeem gemaakt, zie je dat de bijdrage niet wordt opgeteld bij de maandelijkse bijdrage van de deelnemer.
+Die blijft ongewijzigd op 134,86 staan en de premie van het TPP wordt bij de premie in de kolom Bijdrage Werkgever opgeteld.
+
+Is het mogelijk dit te repareren?
+
+Met vriendelijke groet,
+
+Berekening is:
+=((AD49*OF($E$15="";$E$15="Pensioengrondslag")*MIN(ALS(1*$E$14<>0;$E$14;1);ALS(1*$AH49<>0;$AH49;1)))+(AI49*($E$15="Beschikbare Premie")*$E$14))/12+AR49+((AK49+AM49)/12)
+
+
+=((AD49*OF($E$15="";$E$15="Pensioengrondslag")*MIN(ALS(1*$E$14<>0;$E$14;1);ALS(1*$AH49<>0;$AH49;1)))+(AI49*($E$15="Beschikbare Premie")*$E$14))/12+AR49+((AK49+AM49)/12)
+
+=(
+	(
+		PensioenGrondslag_DN (35.883)*
+			OF(PensioenGrondslag_Of_BeschikbarePremie_RG ("PensioenGrondslag") ="";PensioenGrondslag_Of_BeschikbarePremie_RG ("PensioenGrondslag") = "Pensioengrondslag") * _ 
+				MIN(ALS(1*EigenBijdrageDeelnemer%_RG (0,0451) <>0;EigenBijdrageDeelnemer%_RG (0,0451);1);ALS(1*PremiePercentage_Staffel_DN (0,146) <>0;PremiePercentage_Staffel_DN (0,146);1))
+	) +
+	(
+		BeschikbareJaarPremieOP (5238,92)*
+			(PensioenGrondslag_Of_BeschikbarePremie_RG ("PensioenGrondslag") = "Beschikbare Premie") * _
+			EigenBijdrageDeelnemer%_RG (0,0451)
+	)
+)/12 +
+	ExtraEigenBijdrage_DN + 
+	(
+		(
+				RisicoPremieWP/WZP_DN+RisicoPremieTPP_DN
+		)/12
+	)
+
+Als gebaseerd op PensioenGrondslag of leeg, dan pak (de kleinste) premiepercentage van de regeling of van de staffel

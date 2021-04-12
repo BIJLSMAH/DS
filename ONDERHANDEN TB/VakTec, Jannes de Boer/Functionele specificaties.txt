@@ -1,0 +1,35 @@
+Via Jannes heb ik begrepen dat jullie a.s. vrijdag een kennismaking gepland hebben staan. Ter voorbereiding/informatie stuur ik hierbij alvast wat documenten toe die wij gebruiken:
+
+ 
+
+Weekoverzicht:
+We houden 2 weekoverzichten bij, één voor de afdeling metaal en één voor de afdeling bouw. Dit vormt de basis van onze administratie: hier wordt per week ingevuld wie er werken, wat de arbeidsvoorwaarden zijn en wat de tarieven zijn. Ook eventuele aanvullende afspraken zoals een fee voor een externe recruiter of welke pensioenregeling van toepassing is wordt hierin vermeld door de recruiter. Of bijzonderheden zoals vakantie / bijzonder verlof etcetera.
+Vanuit dit overzicht verzamelt de backoffice alle urenbriefjes en zorgt ervoor dat de medewerkers verloond worden en de klanten een factuur krijgen. Of, als dat via een andere partij gaat, controleren we dat.
+In dit overzicht coördineren we dus eigenlijk alle werkenden en bewaken we of er niets over het hoofd wordt gezien qua facturatie. Voor elke week is een nieuw tabblad.
+ 
+Omzet per uitzendkracht:
+Dit overzicht wordt gevuld met informatie uit het weekoverzicht, per week een nieuw tabblad:
+De werkenden
+De klanten
+Het aantal gewerkte uren
+Inkooptarief, verkooptarief, voorgecalculeerde marge
+Recruitersfee
+
+Daarna wordt handmatig ingevuld:
+
+Kosten voor materiaal/huisvesting
+Kosten voor auto of reiskostenvergoeding
+Overwerkuren + percentages
+
+Cumulatief:
+In de omzet per uitzendkracht zit een tabblad waar een cumulatief overzicht wordt getoond. In 2019 is de omzet per uitzendkracht gemaakt en toen zaten beide afdelingen nog in één document. Toen we de documenten los van elkaar hebben getrokken hebben we een apart document genaamd ‘cumulatief’ gemaakt waar beide afdelingen in samenkomen.
+ 
+
+Wat ik denk dat we nodig hebben:
+
+ 
+
+Twee weekoverzichten (bouw&metaal) waarin diverse invulvelden staan en controlevelden waarin we met ‘buttons’ kunnen werken voor het toevoegen of verwijderen van een kandidaat. In dit document mag best veel bewerkt worden maar bij voorkeur wel met invulvelden. Overwerk zou hierin nog moeten worden toegevoegd, dat zit nu alleen in de omzet per uitzendkracht. Het moet iets minder makkelijk zijn om ‘per ongeluk’ namen of getallen te wijzigen, maar anderzijds wel eenvoudig te vullen zijn. En met kleurtjes moet snel duidelijk zijn welke uren nog missen of wat er nog gefactureerd moet worden.
+Omzet per uitzendkracht: dit document zou automatisch gegenereerd moeten worden op basis van de weekoverzichten. De beide afdelingen mogen in één document samenkomen (mits duidelijk gesplitst), maar twee documenten is ook prima. In dit document zou alleen nog moeten worden toegevoegd: kosten voor materiaal/huisvesting/auto en een post voor overige kosten van niet-werkenden en leegloop.  De rest zou automatisch gegenereerd moeten worden.
+Het zou mooi zijn als de resultaten meer inzichtelijk worden gemaakt met tabellen/grafiekjes etc. en wanneer er met kleuren duidelijk gemaakt wordt wat wel en niet goed gaat.
+Cumulatief: dit document zou automatisch gegenereerd moeten kunnen worden op basis van de omzet per uitzendkracht en hoeft ook niet persé in een apart document. Er moet wel een totaaloverzicht komen van beide afdelingen samen.

@@ -1,0 +1,958 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:iso:std:iso:20022:tech:xsd:pain.008.001.02">
+<CstmrDrctDbtInitn>
+	<GrpHdr>
+		<MsgId>JMC20210322051017</MsgId>
+		<CreDtTm>2021-03-22T05:10:17</CreDtTm>
+		<NbOfTxs>28</NbOfTxs>
+		<CtrlSum>1504.99</CtrlSum>
+		<InitgPty>
+			<Nm>Gulp en Geul Journaal</Nm>
+		</InitgPty>
+	</GrpHdr>
+	<PmtInf>
+		<PmtInfId>2021032220</PmtInfId>
+		<PmtMtd>DD</PmtMtd>
+		<BtchBookg>true</BtchBookg>
+		<NbOfTxs>28</NbOfTxs>
+		<CtrlSum>1504.99</CtrlSum>
+		<PmtTpInf>
+			<SvcLvl>
+				<Cd>SEPA</Cd>
+			</SvcLvl>
+			<LclInstrm>
+				<Cd>CORE</Cd>
+			</LclInstrm>
+			<SeqTp>RCUR</SeqTp>
+		</PmtTpInf>
+		<ReqdColltnDt>2021-03-24</ReqdColltnDt>
+		<Cdtr>
+			<Nm>Gulp en Geul Journaal</Nm>
+			<PstlAdr>
+				<Ctry>NL</Ctry>
+				<AdrLine>Dorpsstraat 8</AdrLine>
+				<AdrLine>6271 BL, Gulpen</AdrLine>
+			</PstlAdr>
+		</Cdtr>
+		<CdtrAcct>
+			<Id>
+				<IBAN>NL85ABNA0558835139</IBAN>
+			</Id>
+		</CdtrAcct>
+		<CdtrAgt>
+			<FinInstnId>
+				<BIC>ABNANL2A</BIC>
+			</FinInstnId>
+		</CdtrAgt>
+		<ChrgBr>SLEV</ChrgBr>
+		<CdtrSchmeId>
+			<Id>
+				<PrvtId>
+					<Othr>
+						<Id>NL95JMC146330800000</Id>
+						<SchmeNm>
+							<Prtry>SEPA</Prtry>
+						</SchmeNm>
+					</Othr>
+				</PrvtId>
+			</Id>
+		</CdtrSchmeId>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-1</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">38.47</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Deco-05</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RABONL2U</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Decorette Franssen</Nm>
+				<PstlAdr>
+					<AdrLine>Rijksweg 64</AdrLine>
+					<AdrLine>6271 AG, Gulpen</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL68RABO0117812897</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W07-Fact-2021 0154</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-2</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">38.47</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Peters-06</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RABONL2U</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Peters Parket Service</Nm>
+				<PstlAdr>
+					<AdrLine>Baneheiderweg 54</AdrLine>
+					<AdrLine>6351 JR, Bocholtz</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL54RABO0147598842</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W07-Fact-2021 0155</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-3</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">62.23</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Pijls-09</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RABONL2U</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Math Pijls Uitvaartzorg</Nm>
+				<PstlAdr>
+					<AdrLine>Kerkstraat 197</AdrLine>
+					<AdrLine>6267 EJ, Cad en Keer</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL77RABO0158811240</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W07-Fact-2021 0156</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-4</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">61.09</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Profi-08</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>ABNANL2A</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Profiplan</Nm>
+				<PstlAdr>
+					<AdrLine>Korpendu 7</AdrLine>
+					<AdrLine>6269 BA, Margraten</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL91ABNA0536563055</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W07-Fact-2021 0158</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-5</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">40.73</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Millen-62</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RABONL2U</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Millenium Rolomotive BV</Nm>
+				<PstlAdr>
+					<AdrLine>Wiebachstraat 19 A/B</AdrLine>
+					<AdrLine>6466 NG, Kerkrade</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL93RABO0107923491</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W07-Fact-2021 0159</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-6</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">40.73</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Arthur</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>TRIONL2U</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Uitvaartzorg Arthur Nijsten</Nm>
+				<PstlAdr>
+					<AdrLine>Groeneweg 12</AdrLine>
+					<AdrLine>6271 BR, Gulpen</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL03TRIO0379448076</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W07-Fact-2021 0160</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-7</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">68.89</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Bormjava-57</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RABONL2U</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Administratiebureau Bormans-Java</Nm>
+				<PstlAdr>
+					<AdrLine>Rijksweg 30</AdrLine>
+					<AdrLine>6271 AE, Gulpen</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL33RABO0152519254</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W07-Fact-2021 0164</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-8</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">135.76</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Pijls-09</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RABONL2U</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Math Pijls Uitvaartzorg</Nm>
+				<PstlAdr>
+					<AdrLine>Kerkstraat 197</AdrLine>
+					<AdrLine>6267 EJ, Cad en Keer</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL77RABO0158811240</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W07-Fact-2021 0167</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-9</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">38.47</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Schijns-07</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RABONL2U</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Schoenmakerij Leon Schijns</Nm>
+				<PstlAdr>
+					<AdrLine>Dorpsstraat 18</AdrLine>
+					<AdrLine>6369 AM, Simpelveld</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL61RABO0158815505</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W07-Fact-2021 0169</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-10</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">38.47</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Esbe-13</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>ABNANL2A</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Atelje Esbe</Nm>
+				<PstlAdr>
+					<AdrLine>Dorpsstraat 22</AdrLine>
+					<AdrLine>6271 BK, Gulpen</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL50ABNA0430404956</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W08-Fact-2021 0180</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-11</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">44.13</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>TandWis-63</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>ABNANL2A</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Kunstgebit Bijsterveld</Nm>
+				<PstlAdr>
+					<AdrLine>'t Bijsterveld 2</AdrLine>
+					<AdrLine>5701 GW, Helmond</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL73ABNA0550249885</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W08-Fact-2021 0181</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-12</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">65.05</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Kapolder-46</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>SNSBNL2A</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Plantencentrum Kapolder</Nm>
+				<PstlAdr>
+					<AdrLine>Kapolder 7</AdrLine>
+					<AdrLine>6321 PT, Wijlre</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL41SNSB0901328464</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W08-Fact-2021 0185</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-13</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">36.20</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Koerts-02</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>SNSBNL2A</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Koerts Banden</Nm>
+				<PstlAdr>
+					<AdrLine>Commandeurstraat 6</AdrLine>
+					<AdrLine>6281 AM, Mechelen</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL80SNSB0853710074</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W09-Fact-2021 0201</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-14</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">38.47</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Deco-05</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RABONL2U</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Decorette Franssen</Nm>
+				<PstlAdr>
+					<AdrLine>Rijksweg 64</AdrLine>
+					<AdrLine>6271 AG, Gulpen</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL68RABO0117812897</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W09-Fact-2021 0204</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-15</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">38.47</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Peters-06</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RABONL2U</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Peters Parket Service</Nm>
+				<PstlAdr>
+					<AdrLine>Baneheiderweg 54</AdrLine>
+					<AdrLine>6351 JR, Bocholtz</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL54RABO0147598842</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W09-Fact-2021 0205</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-16</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">62.23</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Pijls-09</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RABONL2U</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Math Pijls Uitvaartzorg</Nm>
+				<PstlAdr>
+					<AdrLine>Kerkstraat 197</AdrLine>
+					<AdrLine>6267 EJ, Cad en Keer</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL77RABO0158811240</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W09-Fact-2021 0206</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-17</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">61.09</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Profi-08</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>ABNANL2A</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Profiplan</Nm>
+				<PstlAdr>
+					<AdrLine>Korpendu 7</AdrLine>
+					<AdrLine>6269 BA, Margraten</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL91ABNA0536563055</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W09-Fact-2021 0208</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-18</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">40.73</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Millen-62</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RABONL2U</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Millenium Rolomotive BV</Nm>
+				<PstlAdr>
+					<AdrLine>Wiebachstraat 19 A/B</AdrLine>
+					<AdrLine>6466 NG, Kerkrade</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL93RABO0107923491</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W09-Fact-2021 0209</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-19</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">40.73</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Arthur</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>TRIONL2U</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Uitvaartzorg Arthur Nijsten</Nm>
+				<PstlAdr>
+					<AdrLine>Groeneweg 12</AdrLine>
+					<AdrLine>6271 BR, Gulpen</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL03TRIO0379448076</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W09-Fact-2021 0210</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-20</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">47.92</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Hippi-03</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>INGBNL2A</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>P. Cruts</Nm>
+				<PstlAdr>
+					<AdrLine>Marktstraat 10</AdrLine>
+					<AdrLine>6369 AG, Simpelveld</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL20INGB0005238533</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W09-Fact-2021 0212</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-21</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">40.73</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Mullen-44</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RBRBNL21</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Hovenier Mark Mullenders</Nm>
+				<PstlAdr>
+					<AdrLine>Jan van Houtemstraat 22</AdrLine>
+					<AdrLine>6321 BR, Wijlre</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL40RBRB0920336477</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W09-Fact-2021 0213</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-22</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">40.73</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Beitel-14</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>INGBNL2A</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>De Beitel Grafmonumenten</Nm>
+				<PstlAdr>
+					<AdrLine>Oude Roderweg 1</AdrLine>
+					<AdrLine>6422 PE, Heerlen</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL89INGB0679861815</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W09-Fact-2021 0214</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-23</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">40.73</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Wieland-64</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RBRBNL21</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Edith Wieland</Nm>
+				<PstlAdr>
+					<AdrLine>Kolmonderstraat 15</AdrLine>
+					<AdrLine>6286 CD, Nijswiller</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL05RBRB0850020255</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W09-Fact-2021 0215</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-24</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">38.47</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Schijns-07</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RABONL2U</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Schoenmakerij Leon Schijns</Nm>
+				<PstlAdr>
+					<AdrLine>Dorpsstraat 18</AdrLine>
+					<AdrLine>6369 AM, Simpelveld</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL61RABO0158815505</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W09-Fact-2021 0218</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-25</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">38.47</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Esbe-13</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>ABNANL2A</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Atelje Esbe</Nm>
+				<PstlAdr>
+					<AdrLine>Dorpsstraat 22</AdrLine>
+					<AdrLine>6271 BK, Gulpen</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL50ABNA0430404956</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W10-Fact-2021 0233</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-26</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">44.13</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>TandWis-63</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>ABNANL2A</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Kunstgebit Bijsterveld</Nm>
+				<PstlAdr>
+					<AdrLine>'t Bijsterveld 2</AdrLine>
+					<AdrLine>5701 GW, Helmond</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL73ABNA0550249885</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W10-Fact-2021 0234</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-27</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">65.05</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Kapolder-46</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>SNSBNL2A</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Plantencentrum Kapolder</Nm>
+				<PstlAdr>
+					<AdrLine>Kapolder 7</AdrLine>
+					<AdrLine>6321 PT, Wijlre</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL41SNSB0901328464</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W10-Fact-2021 0238</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+		<DrctDbtTxInf>
+			<PmtId>
+				<EndToEndId>GGT-28</EndToEndId>
+			</PmtId>
+			<InstdAmt Ccy="EUR">158.39</InstdAmt>
+			<DrctDbtTx>
+				<MndtRltdInf>
+					<MndtId>Pijls-09</MndtId>
+					<DtOfSgntr>2009-11-01</DtOfSgntr>
+				</MndtRltdInf>
+			</DrctDbtTx>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RABONL2U</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<Dbtr>
+				<Nm>Math Pijls Uitvaartzorg</Nm>
+				<PstlAdr>
+					<AdrLine>Kerkstraat 197</AdrLine>
+					<AdrLine>6267 EJ, Cad en Keer</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>NL77RABO0158811240</IBAN>
+				</Id>
+			</DbtrAcct>
+			<RmtInf>
+				<Ustrd>Adv-W10-Fact-2021 0250</Ustrd>
+			</RmtInf>
+		</DrctDbtTxInf>
+	</PmtInf>
+</CstmrDrctDbtInitn>
+</Document>
